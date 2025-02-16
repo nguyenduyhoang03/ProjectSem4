@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,16 +23,17 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENPOINT = {
             "/users/create-user",
             "/auth/login",
-            "auth/introspect"
+            "auth/introspect",
+            "/posts/getAllPost"
     };
     private final String[] PRIVATE_ENPOINT = {
             "/users",
             "/posts/create-post",
-            "/posts/getAllPost",
             "/posts/delete-post"
     };
 
@@ -41,8 +43,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request
-                .requestMatchers(HttpMethod.POST, PUBLIC_ENPOINT).permitAll() // Cho phép tạo user, login
-                .requestMatchers(PRIVATE_ENPOINT).hasRole(Role.ADMIN.name()) // Chặn tất cả HTTP methods
+                .requestMatchers(HttpMethod.POST, PUBLIC_ENPOINT).permitAll()
+                .requestMatchers(PRIVATE_ENPOINT).hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated());
 
 

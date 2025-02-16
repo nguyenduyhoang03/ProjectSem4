@@ -3,6 +3,9 @@ package com.TrainingSouls.Controller;
 import com.TrainingSouls.DTO.Request.PostCreation;
 import com.TrainingSouls.Entity.Post;
 import com.TrainingSouls.Service.PostService;
+import com.TrainingSouls.Utils.JWTUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,19 +19,10 @@ public class PostController {
         this.postService = postService;
     }
 
+
     @PostMapping("/create-post")
-    public Post createPost(@RequestParam Long userId, @RequestBody PostCreation request) {
-        return postService.createPost(userId, request);
-    }
-
-    @PostMapping("/{postId}/comments")
-    public Post addComment(@RequestParam Long userId, @PathVariable Long postId, @RequestBody String content) {
-        return postService.addComment(userId, postId, content);
-    }
-
-    @PostMapping("/{postId}/likes")
-    public Post addLike(@RequestParam Long userId, @PathVariable Long postId) {
-        return postService.addLike(userId, postId);
+    public ResponseEntity<?> createPost(@RequestBody PostCreation request, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(postService.createPost(request, httpServletRequest));
     }
 
     @GetMapping("/getAllPost")
@@ -36,18 +30,9 @@ public class PostController {
         return postService.getAllPosts();
     }
 
-    @GetMapping("/{postId}/comments")
-    public List<Post> getComments(@PathVariable Long postId) {
-        return postService.getComments(postId);
-    }
 
-    @GetMapping("/{postId}/likes")
-    public List<Post> getLikes(@PathVariable Long postId) {
-        return postService.getLikes(postId);
-    }
-
-    @DeleteMapping("/delete-post")
-    public void deletePost(@RequestParam Long postId) {
-        postService.DeletePost(postId);
+    @DeleteMapping("/delete-post/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+        return postService.DeletePost(postId);
     }
 }
