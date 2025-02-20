@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Healthdatum {
     @Id
     @Column(name = "HealthDataID", nullable = false)
-    private Integer id;
+    private Integer HealthDataID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

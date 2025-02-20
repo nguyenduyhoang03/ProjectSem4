@@ -14,7 +14,7 @@ public class JWTUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String getSubjectFromRequest(HttpServletRequest request) {
+    public static Long getSubjectFromRequest(HttpServletRequest request) {
         String token = getTokenFromRequest(request);
         if (token == null) {
             throw new RuntimeException("JWT Token not found in request");
@@ -22,7 +22,7 @@ public class JWTUtils {
 
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
-            return signedJWT.getJWTClaimsSet().getSubject();
+            return signedJWT.getJWTClaimsSet().getLongClaim("userId");
         } catch (ParseException e) {
             throw new RuntimeException("Invalid JWT token", e);
         }

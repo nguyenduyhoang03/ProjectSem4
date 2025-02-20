@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Workout {
     @Id
     @Column(name = "WorkoutID", nullable = false)
-    private Integer id;
+    private Integer WorkoutID;
 
     @Column(name = "Name", nullable = false)
     private String name;

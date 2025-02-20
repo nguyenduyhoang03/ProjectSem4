@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class Reward {
     @Id
     @Column(name = "RewardID", nullable = false)
-    private Integer id;
+    private Integer RewardID;
 
     @Column(name = "Name", nullable = false)
     private String name;

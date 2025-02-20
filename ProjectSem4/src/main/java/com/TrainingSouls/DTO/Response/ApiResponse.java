@@ -3,8 +3,7 @@ package com.TrainingSouls.DTO.Response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -8,6 +8,7 @@ import com.TrainingSouls.Enums.Role;
 import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Mapper.UserMapper;
+import com.TrainingSouls.Repository.RoleRepository;
 import com.TrainingSouls.Repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.List;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -46,25 +48,29 @@ public class UserService {
 
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
-        user.setRoles(roles);
+//        user.setRoles(roles);
 
        return userRepository.save(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        log.info("Get all users");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
 
-    public UserResponse getUserById(int id) {
+
+    public UserResponse getUserById(Long id) {
         return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND)));
     }
 
-    public UserResponse updateUser(int userId,UserUpdate request) {
+    public UserResponse updateUser(Long userId,UserUpdate request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -76,7 +82,8 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public void deleteUser(int userId) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
 }

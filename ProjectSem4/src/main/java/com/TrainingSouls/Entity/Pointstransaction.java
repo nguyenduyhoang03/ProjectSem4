@@ -16,7 +16,7 @@ import java.time.Instant;
 public class Pointstransaction {
     @Id
     @Column(name = "TransactionID", nullable = false)
-    private Integer id;
+    private Integer TransactionID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class User {
     @Id
     @Column(name = "UserID", nullable = false)
-     Integer id;
+     Long userID;
 
     @Column(name = "Name", nullable = false)
      String name;
@@ -43,14 +43,13 @@ public class User {
     @Column(name = "Level")
      Integer level;
 
-    @ElementCollection
-    @Column(name = "roles")
-    Set<String> roles;
+    @ManyToMany
+    Set<Role> roles;
 
     @PrePersist
     public void generateId() {
-        if (this.id == null) {
-            this.id = Math.toIntExact(Math.abs(UUID.randomUUID().getMostSignificantBits() % 900000000) + 100000000);
+        if (this.userID == null) {
+            this.userID = (long) Math.toIntExact(Math.abs(UUID.randomUUID().getMostSignificantBits() % 900000000) + 100000000);
             // ID sẽ có 9 chữ số từ 100000000 - 999999999
         }
     }

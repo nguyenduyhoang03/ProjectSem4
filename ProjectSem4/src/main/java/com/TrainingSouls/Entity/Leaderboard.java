@@ -14,7 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Leaderboard {
     @Id
     @Column(name = "UserID", nullable = false)
-    private Integer id;
+    private Integer UserID;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)

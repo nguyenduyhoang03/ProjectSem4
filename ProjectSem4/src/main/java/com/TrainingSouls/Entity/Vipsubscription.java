@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Vipsubscription {
     @Id
     @Column(name = "SubscriptionID", nullable = false)
-    private Integer id;
+    private Integer SubscriptionID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

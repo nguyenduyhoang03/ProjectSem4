@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Progress {
     @Id
     @Column(name = "ProgressID", nullable = false)
-    private Integer id;
+    private Integer ProgressID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

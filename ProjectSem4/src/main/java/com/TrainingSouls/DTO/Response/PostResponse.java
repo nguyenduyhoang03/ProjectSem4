@@ -1,6 +1,9 @@
-package com.TrainingSouls.DTO.Request;
+package com.TrainingSouls.DTO.Response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,8 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostCreation {
-    private Long userId;
+public class PostResponse {
+    private Long id;
+    private Long userID;
+    private String name;
     private String title;
     private List<String> imgUrl;
     private List<String> videoUrl;

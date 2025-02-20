@@ -33,7 +33,7 @@ public class ApplicationInitConfig {
                         .name("admin")
                         .email("admin@gmail.com")
                         .password(passwordEncoder.encode("12345678"))
-                        .roles(roles)
+//                        .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Đã tạo tài khoản ADMIN");

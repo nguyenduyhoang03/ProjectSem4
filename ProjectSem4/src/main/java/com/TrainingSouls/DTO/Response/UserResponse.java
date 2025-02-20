@@ -1,15 +1,18 @@
 package com.TrainingSouls.DTO.Response;
 
+import com.TrainingSouls.Entity.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class UserResponse {
     private Integer id;
 
@@ -23,5 +26,5 @@ public class UserResponse {
 
     private Integer level;
 
-    private Set<String> roles;
+    private Set<RoleResponse> roles;
 }

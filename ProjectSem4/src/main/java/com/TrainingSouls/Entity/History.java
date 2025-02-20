@@ -16,7 +16,7 @@ import java.time.Instant;
 public class History {
     @Id
     @Column(name = "HistoryID", nullable = false)
-    private Integer id;
+    private Integer HistoryID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

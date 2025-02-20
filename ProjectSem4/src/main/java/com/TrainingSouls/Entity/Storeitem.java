@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Storeitem {
     @Id
     @Column(name = "ItemID", nullable = false)
-    private Integer id;
+    private Integer ItemID;
 
     @Column(name = "Name", nullable = false)
     private String name;

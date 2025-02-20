@@ -24,12 +24,12 @@ import java.util.List;
 public class UserController {
      UserService userService;
 
-    @PostMapping("/create-user")
-    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationReq user) {
-        ApiResponse<User> response = new ApiResponse<>();
-        response.setResult(userService.createUser(user));
-        return response;
-    }
+//    @PostMapping("/create-user")
+//    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationReq user) {
+//        ApiResponse<User> response = new ApiResponse<>();
+//        response.setResult(userService.createUser(user));
+//        return response;
+//    }
 
     @GetMapping
     public List<UserResponse> getAllUsers() {
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponse getUserById(@PathVariable int userId) {
+    public UserResponse getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
@@ -51,12 +51,12 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public UserResponse UpdateUser(@PathVariable int userId, @RequestBody UserUpdate userUpdate){
+    public UserResponse UpdateUser(@PathVariable Long userId, @RequestBody UserUpdate userUpdate){
         return userService.updateUser(userId,userUpdate);
     }
 
     @DeleteMapping("/{userId}")
-    public String deleteUser(@PathVariable int userId) {
+    public String deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return "User deleted";
     }

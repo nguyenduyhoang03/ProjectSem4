@@ -3,11 +3,12 @@ package com.TrainingSouls.DTO.Request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserCreationReq {
     @Size(min = 6, max = 50, message = "NAME_INVALID")
     private String name;

@@ -1,22 +1,16 @@
 package com.TrainingSouls.DTO.Request;
 
+
+import lombok.*;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserUpdate {
     private String name;
     private String password;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    List<String> roles;
 }
