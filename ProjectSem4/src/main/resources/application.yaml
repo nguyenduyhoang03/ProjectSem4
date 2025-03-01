@@ -19,5 +19,15 @@ server:
 jwt:
   signerKey: "HMgNNiK2cPCkBR1RGd8b7GFVg/qWIW4200CDsuE4WWElu3mQxoUecnFxkOdK2CRd"
 
+vnpay:
+  pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  tmn-code: 22MBY15K
+  secret-key: 8HOBMXOV2MHMXX48JQ6QG6WYSGJ9BUO3
+  return-url: http://localhost:8080/trainingSouls/payment/vn-pay-callback
+  version: 2.1.0
+  command: pay
+  order-type: other
+
+
 
 

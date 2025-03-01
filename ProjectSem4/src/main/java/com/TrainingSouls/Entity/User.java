@@ -37,7 +37,7 @@ public class User {
 
     @ColumnDefault("0")
     @Column(name = "Points")
-     Integer points;
+     Integer points = 0;
 
     @ColumnDefault("1")
     @Column(name = "Level")

@@ -11,6 +11,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +26,12 @@ import java.util.List;
 public class UserController {
      UserService userService;
 
-//    @PostMapping("/create-user")
-//    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationReq user) {
-//        ApiResponse<User> response = new ApiResponse<>();
-//        response.setResult(userService.createUser(user));
-//        return response;
-//    }
+    @PostMapping("/create-user")
+    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationReq user) {
+        ApiResponse<User> response = new ApiResponse<>();
+        response.setResult(userService.createUser(user));
+        return response;
+    }
 
     @GetMapping
     public List<UserResponse> getAllUsers() {
@@ -41,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponse getUserById(@PathVariable Long userId) {
+    public User getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
@@ -54,6 +56,20 @@ public class UserController {
     public UserResponse UpdateUser(@PathVariable Long userId, @RequestBody UserUpdate userUpdate){
         return userService.updateUser(userId,userUpdate);
     }
+
+    @PostMapping("/add-points/{userId}/{points}")
+    public ResponseEntity<?> addPoint(@PathVariable Long userId, @PathVariable int points) {
+        log.info("Add points: userId={}, points={}", userId, points);
+
+        try {
+            userService.addPoints(userId, points);
+            return ResponseEntity.ok("Points updated successfully");
+        } catch (Exception e) {
+            log.error("Failed to add points: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 
     @DeleteMapping("/{userId}")
     public String deleteUser(@PathVariable Long userId) {

@@ -1,5 +1,6 @@
 package com.TrainingSouls.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,19 +14,21 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "pointstransactions")
-public class Pointstransaction {
+public class PointsTransaction {
     @Id
     @Column(name = "TransactionID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer TransactionID;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "UserID", nullable = false)
-    private User userID;
+    @JsonIgnoreProperties({"password", "accountType", "level", "roles"}) // Ẩn các trường không cần thiết
+    private User user;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "Type", nullable = false)
-    private String type;
+    private TransactionType type;
 
     @Column(name = "Points", nullable = false)
     private Integer points;
@@ -37,5 +40,17 @@ public class Pointstransaction {
     @Lob
     @Column(name = "Description")
     private String description;
+
+    @Enumerated(EnumType.STRING) // Thêm trạng thái giao dịch
+    @Column(name = "Status", nullable = false)
+    private TransactionStatus status;
+
+    public enum TransactionType {
+        EARN, SPEND
+    }
+
+    public enum TransactionStatus {
+        PENDING, SUCCESS, FAILED
+    }
 
 }

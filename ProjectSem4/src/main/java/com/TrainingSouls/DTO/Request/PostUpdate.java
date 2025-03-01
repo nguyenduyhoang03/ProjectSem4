@@ -15,6 +15,6 @@ public class PostUpdate {
      String title;
      List<String> imgUrl;
      List<String> videoUrl;
-     String content;
+     List<String> content;
 
 }

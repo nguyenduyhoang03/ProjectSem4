@@ -30,7 +30,8 @@ public class Post {
     @ElementCollection
     private List<String> videoUrl;
 
-    private String content;
+    @ElementCollection
+    private List<String> content;
 
     private LocalDateTime createdAt;
 }

@@ -19,6 +19,6 @@ public class PostResponse {
     private String title;
     private List<String> imgUrl;
     private List<String> videoUrl;
-    private String content;
+    private List<String> content;
     private LocalDateTime createdAt;
 }

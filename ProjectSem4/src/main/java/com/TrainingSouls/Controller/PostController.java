@@ -41,8 +41,7 @@ public class PostController {
     public List<PostResponse> getAllPosts() {
         return postService.getAllPosts();
     }
-
-
+    
 
     @DeleteMapping("/delete-post/{postId}")
     public String deletePost(@PathVariable Long postId) {

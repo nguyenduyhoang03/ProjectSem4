@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/auth/logout",
             "auth/introspect",
             "/posts/getAllPost",
-            "posts/{postId}"
+            "posts/{postId}",
+            "/payment/**"
     };
 
 

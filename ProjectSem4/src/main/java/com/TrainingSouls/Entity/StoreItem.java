@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "storeitems")
-public class Storeitem {
+public class StoreItem {
     @Id
     @Column(name = "ItemID", nullable = false)
-    private Integer ItemID;
+    private Integer itemId;
 
     @Column(name = "Name", nullable = false)
     private String name;
