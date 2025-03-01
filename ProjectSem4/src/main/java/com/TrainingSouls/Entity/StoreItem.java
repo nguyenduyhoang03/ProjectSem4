@@ -11,6 +11,7 @@ import lombok.Setter;
 public class StoreItem {
     @Id
     @Column(name = "ItemID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer itemId;
 
     @Column(name = "Name", nullable = false)
