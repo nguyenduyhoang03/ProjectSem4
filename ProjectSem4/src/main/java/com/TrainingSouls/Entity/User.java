@@ -1,10 +1,13 @@
 package com.TrainingSouls.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,7 +36,7 @@ public class User {
     @ColumnDefault("'Basic'")
     @Lob
     @Column(name = "AccountType")
-     String accountType;
+     String accountType = "Basic";
 
     @ColumnDefault("0")
     @Column(name = "Points")
@@ -41,10 +44,15 @@ public class User {
 
     @ColumnDefault("1")
     @Column(name = "Level")
-     Integer level;
+     Integer level = 1;
 
     @ManyToMany
     Set<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<UserItem> purchasedItems = new ArrayList<>();
+
 
     @PrePersist
     public void generateId() {
