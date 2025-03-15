@@ -14,9 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
 
@@ -37,8 +40,13 @@ public class PaymentController {
 
 
     @GetMapping("/vn-pay-callback")
-    public ResponseObject<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request) {
-        return paymentService.handleVNPayCallback(request);
+    public RedirectView handleVNPayCallback(HttpServletRequest request) {
+            paymentService.handleVNPayCallback(request);
+        String responseCode = request.getParameter("vnp_ResponseCode");
+//        String status = "00".equals(responseCode) ? "success" : "fail";
+
+        return new RedirectView("https://localhost:3000/");
     }
+
 
 }

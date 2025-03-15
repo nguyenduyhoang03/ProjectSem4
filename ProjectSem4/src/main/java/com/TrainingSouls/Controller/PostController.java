@@ -23,8 +23,8 @@ public class PostController {
 
 
     @PostMapping("/create-post")
-    public ResponseEntity<?> createPost(@RequestBody PostCreation request, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(postService.createPost(request, httpServletRequest));
+    public PostResponse createPost(@RequestBody PostCreation request, HttpServletRequest httpServletRequest) {
+        return postService.createPost(request, httpServletRequest);
     }
 
     @PostMapping("/update-post/{postId}")

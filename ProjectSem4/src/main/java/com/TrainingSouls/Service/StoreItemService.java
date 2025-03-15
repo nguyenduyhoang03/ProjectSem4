@@ -6,6 +6,7 @@ import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Repository.StoreItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public class StoreItemService {
         return storeItemRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     public StoreItem addStoreItem(StoreItemReq storeItemReq) {
         StoreItem storeItem = new StoreItem();
         storeItem.setName(storeItemReq.getName());
@@ -34,6 +37,7 @@ public class StoreItemService {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     public StoreItem updateStoreItem(Integer id, StoreItemReq storeItemReq){
         StoreItem storeItem = storeItemRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
@@ -48,6 +52,7 @@ public class StoreItemService {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteStoreItem(int id){
         storeItemRepository.deleteById(id);
     }

@@ -1,5 +1,6 @@
 package com.TrainingSouls.Service;
 
+import com.TrainingSouls.DTO.Request.ChangePassword;
 import com.TrainingSouls.DTO.Request.UserCreationReq;
 import com.TrainingSouls.DTO.Request.UserUpdate;
 import com.TrainingSouls.DTO.Response.UserResponse;
@@ -10,6 +11,8 @@ import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Mapper.UserMapper;
 import com.TrainingSouls.Repository.RoleRepository;
 import com.TrainingSouls.Repository.UserRepository;
+import com.TrainingSouls.Utils.JWTUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -48,7 +51,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         roles.add(userRole);
         user.setRoles(roles);
-
+        user.setPoints(0);
+        user.setLevel(1);
+        user.setAccountType("basic");
 
         return userRepository.save(user);
     }

@@ -53,6 +53,8 @@ public class User {
     @JsonManagedReference
     private List<UserItem> purchasedItems = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserProfile userProfile;
 
     @PrePersist
     public void generateId() {

@@ -13,14 +13,11 @@ import com.TrainingSouls.Repository.UserRepository;
 import com.TrainingSouls.Utils.JWTUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,7 +37,7 @@ public class PostService {
     }
 
 
-    public Post createPost(PostCreation request , HttpServletRequest httpServletRequest) {
+    public PostResponse createPost(PostCreation request , HttpServletRequest httpServletRequest) {
         //lay userID tu Token
         Long userId = JWTUtils.getSubjectFromRequest(httpServletRequest);
         User user = userRepository.findById(userId)
@@ -56,7 +53,9 @@ public class PostService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return postRepository.save(post);
+        postRepository.save(post);
+
+        return postMapper.toPostResponse(post);
     }
 
 

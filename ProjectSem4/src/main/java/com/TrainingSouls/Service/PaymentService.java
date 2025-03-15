@@ -88,10 +88,9 @@ public class PaymentService {
         System.out.println("Transaction found: " + pointsTransaction);
 
         if ("00".equals(responseCode)) { // Thanh toán thành công
-            System.out.println("Transaction successful! bat dau tang point");
+
             Long userId = pointsTransaction.getUser().getUserID();
-            System.out.println("User ID: " + userId);
-            System.out.println("Transaction ID: " + pointsTransaction.getTransactionID());
+
             userService.addPoints(userId, pointsTransaction.getPoints());
 
             pointsTransaction.setStatus(PointsTransaction.TransactionStatus.SUCCESS);
@@ -101,7 +100,7 @@ public class PaymentService {
 
 
         return new ResponseObject<>(HttpStatus.OK, "Payment processed",
-                new PaymentDTO.VNPayResponse(responseCode, "Transaction updated", ""));
+                new PaymentDTO.VNPayResponse(responseCode, "Transaction updated", "http://localhost:3000"));
     }
 
 

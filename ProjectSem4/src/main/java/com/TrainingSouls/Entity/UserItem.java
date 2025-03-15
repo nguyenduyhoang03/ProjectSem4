@@ -21,7 +21,7 @@ public class UserItem {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"password", "accountType", "level", "roles"}) // Ẩn các trường không cần thiết
+    @JsonIgnoreProperties({"password", "accountType", "level", "roles"})
     @JsonBackReference
     private User user;
 

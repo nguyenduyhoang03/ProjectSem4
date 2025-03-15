@@ -1,0 +1,32 @@
+#services:
+#  mysql:
+#    image: mysql:8.0.36-debian  # Chỉ định rõ phiên bản MySQL
+#    container_name: mysql-container
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 2003
+#      MYSQL_DATABASE: project_sem4
+#    ports:
+#      - "3306:3306"
+#    networks:
+#      - trainning-network
+#
+#  spring:
+#    build: .  # Đảm bảo build từ thư mục chứa Dockerfile
+#    image: trainning-soul:0.0.1
+#    container_name: spring-app
+#    restart: always
+#    depends_on:
+#      - mysql
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/project_sem4
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: 2003
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - trainning-network
+#
+#networks:
+#  trainning-network:
+#    external: true  # Đảm bảo network này đã tồn tại, nếu chưa có hãy tạo
