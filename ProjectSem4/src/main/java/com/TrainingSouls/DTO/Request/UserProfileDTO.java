@@ -20,4 +20,9 @@ public class UserProfileDTO {
     private String fitnessGoal;
     private String level;
     private List<String> medicalConditions;
+    private Integer strength = 1;
+    private Integer Endurance = 1;
+    private Integer Health = 1;
+    private Integer Agility = 1;
+    private Integer deathPoints = 0;
 }

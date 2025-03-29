@@ -16,7 +16,7 @@ import java.time.Instant;
 public class Notification {
     @Id
     @Column(name = "NotificationID", nullable = false)
-    private Integer NotificationID;
+    private Integer NotificationId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

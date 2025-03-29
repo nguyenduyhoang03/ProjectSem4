@@ -23,7 +23,7 @@ vnpay:
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   tmn-code: 22MBY15K
   secret-key: 8HOBMXOV2MHMXX48JQ6QG6WYSGJ9BUO3
-  return-url: http://localhost:8080/trainingSouls/payment/vn-pay-callback
+  return-url: http://54.251.220.228:8080/trainingSouls/payment/vn-pay-callback
   version: 2.1.0
   command: pay
   order-type: other

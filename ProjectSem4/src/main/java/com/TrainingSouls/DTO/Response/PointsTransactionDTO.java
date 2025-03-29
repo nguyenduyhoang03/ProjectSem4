@@ -18,7 +18,7 @@ public class PointsTransactionDTO {
     private PointsTransaction.TransactionStatus status;
 
     public PointsTransactionDTO(PointsTransaction transaction) {
-        this.transactionId = transaction.getTransactionID();
+        this.transactionId = transaction.getTransactionId();
         this.user = new UserDTO(transaction.getUser());
         this.type = transaction.getType();
         this.points = transaction.getPoints();

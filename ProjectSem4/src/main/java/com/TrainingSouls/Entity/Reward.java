@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @Table(name = "rewards")
 public class Reward {
     @Id
-    @Column(name = "RewardID", nullable = false)
-    private Integer RewardID;
+    @Column(name = "RewardId", nullable = false)
+    private Integer RewardId;
 
     @Column(name = "Name", nullable = false)
     private String name;

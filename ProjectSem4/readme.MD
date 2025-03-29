@@ -22,15 +22,15 @@ This microservice is responsible for:
 
 ## Docker guideline
 ### Build docker image
-`docker build -t <account>/identity-service:0.9.0 .`
+`docker build -t nguyenduyhoang03/training-service:0.9.0 .`
 ### Push docker image to Docker Hub
-`docker image push <account>/identity-service:0.9.0`
+`docker image push nguyenduyhoang03/training-service:0.9.0`
 ### Create network:
 `docker network create training-network`
 ### Start MySQL in devteria-network
 `docker run --network training-network --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=2003 -d mysql:8.0.36-debian`
 ### Run your application in devteria-network
-`docker run --name training-service --network training-network -p 8080:8080 -e DBMS_CONNECTION=jdbc:mysql://mysql:3306/project_sem4 nguyenduyhoang03/training-service:0.1.1`
+`docker run --name training-service --network training-network -p 8080:8080 -e DBMS_CONNECTION=jdbc:mysql://mysql:3306/project_sem4 nguyenduyhoang03/training-service:0.1.3`
 
 ## Install Docker on ubuntu
 

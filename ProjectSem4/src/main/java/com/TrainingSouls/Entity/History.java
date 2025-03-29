@@ -15,12 +15,12 @@ import java.time.Instant;
 @Table(name = "history")
 public class History {
     @Id
-    @Column(name = "HistoryID", nullable = false)
-    private Integer HistoryID;
+    @Column(name = "HistoryId", nullable = false)
+    private Integer HistoryId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserID", nullable = false)
+    @JoinColumn(name = "UserId", nullable = false)
     private User userID;
 
     @Column(name = "Activity", nullable = false)

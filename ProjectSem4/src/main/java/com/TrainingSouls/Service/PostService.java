@@ -79,11 +79,10 @@ public class PostService {
     }
 
 
-    public List<PostResponse> getAllPosts() {
+    public List<Post> getAllPosts() {
         List<Post> post = postRepository.findAll();
 
-        return post.stream().map(postMapper::toPostResponse)
-                .collect(Collectors.toList());
+        return post.stream().toList();
     }
 
 

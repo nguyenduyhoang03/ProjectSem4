@@ -33,8 +33,6 @@ public class User {
     @Column(name = "Password", nullable = false)
      String password;
 
-    @ColumnDefault("'Basic'")
-    @Lob
     @Column(name = "AccountType")
      String accountType = "Basic";
 
@@ -54,13 +52,13 @@ public class User {
     private List<UserItem> purchasedItems = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private UserProfile userProfile;
 
     @PrePersist
     public void generateId() {
         if (this.userID == null) {
-            this.userID = (long) Math.toIntExact(Math.abs(UUID.randomUUID().getMostSignificantBits() % 900000000) + 100000000);
-            // ID sẽ có 9 chữ số từ 100000000 - 999999999
+            this.userID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         }
     }
 

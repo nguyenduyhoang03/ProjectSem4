@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
@@ -25,7 +27,6 @@ public class UserProfileService {
     @Transactional
     public UserProfile saveUserProfile(HttpServletRequest request, UserProfileDTO userProfileDTO) {
         long userId = JWTUtils.getSubjectFromRequest(request);
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 

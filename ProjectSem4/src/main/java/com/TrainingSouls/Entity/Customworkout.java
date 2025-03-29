@@ -12,8 +12,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "customworkouts")
 public class Customworkout {
     @Id
-    @Column(name = "CustomWorkoutID", nullable = false)
-    private Integer CustomWorkoutID;
+    @Column(name = "CustomWorkoutId", nullable = false)
+    private Integer CustomWorkoutId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -16,8 +16,8 @@ import java.time.Instant;
 @Table(name = "payments")
 public class Payment {
     @Id
-    @Column(name = "PaymentID", nullable = false)
-    private Integer PaymentID;
+    @Column(name = "PaymentId", nullable = false)
+    private Integer PaymentId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -26,8 +26,8 @@ public class Payment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "RewardID", nullable = false)
-    private Reward rewardID;
+    @JoinColumn(name = "RewardId", nullable = false)
+    private Reward rewardId;
 
     @Column(name = "Amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;

@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers() {
+    public List<User> getAllUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Name: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info("GrantedAuthority: {}", grantedAuthority));
@@ -54,12 +54,12 @@ public class UserController {
     }
 
     @GetMapping("/getMyInfo")
-    public ApiResponse<UserResponse> getMyInfo() {
-        return ApiResponse.<UserResponse>builder().result(userService.getMyInfo()).build();
+    public ApiResponse<User> getMyInfo() {
+        return ApiResponse.<User>builder().result(userService.getMyInfo()).build();
     }
 
     @PutMapping("/{userId}")
-    public UserResponse UpdateUser(@PathVariable Long userId, @RequestBody UserUpdate userUpdate){
+    public User UpdateUser(@PathVariable Long userId, @RequestBody UserUpdate userUpdate){
         return userService.updateUser(userId,userUpdate);
     }
 

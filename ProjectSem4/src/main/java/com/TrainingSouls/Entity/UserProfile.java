@@ -1,5 +1,6 @@
 package com.TrainingSouls.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +17,9 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",referencedColumnName = "UserID", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id", referencedColumnName = "UserID", nullable = false, unique = true)
+    @JsonBackReference
     private User user;
 
     @Column(name = "gender")
@@ -55,6 +57,20 @@ public class UserProfile {
     @Column(name = "medical_condition")
     private List<String> medicalConditions = new ArrayList<>();
 
+    @Column(name = "strength")
+    private Integer strength = 1;
+
+    @Column(name = "Endurance")
+    private Integer Endurance = 1;
+
+    @Column(name = "Health")
+    private Integer Health = 1;
+
+    @Column(name = "Agility")
+    private Integer Agility = 1;
+
+    @Column(name = "deathPoints")
+    private Integer deathPoints = 0;
 
     public void calculateMetrics() {
         this.bmi = weight / ((height / 100) * (height / 100));

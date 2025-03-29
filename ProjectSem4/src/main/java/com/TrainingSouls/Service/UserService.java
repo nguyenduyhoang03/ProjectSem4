@@ -12,6 +12,7 @@ import com.TrainingSouls.Mapper.UserMapper;
 import com.TrainingSouls.Repository.RoleRepository;
 import com.TrainingSouls.Repository.UserRepository;
 import com.TrainingSouls.Utils.JWTUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,8 +64,8 @@ public class UserService {
 
     //lay tat ca User
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+    public List<User> getAllUsers() {
+        return userRepository.findAll().stream().toList();
     }
 
 
@@ -72,25 +75,30 @@ public class UserService {
     }
 
 
-    //cap nhat thong tin nguoi dung
-    public UserResponse updateUser(Long userId,UserUpdate request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
-        userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        var roles = roleRepository.findAllById(request.getRoles());
+    public User updateUser(Long userId, UserUpdate request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setRoles(new HashSet<>(roles));
-        return userMapper.toUserResponse(userRepository.save(user));
+        user.setName(request.getName());
+
+        Set<Role> roles = request.getRoles().stream()
+                .map(roleName -> roleRepository.findById(roleName)
+                        .orElseThrow(() -> new RuntimeException("Role not found")))
+                .collect(Collectors.toSet());
+
+        user.setRoles(roles);
+        return userRepository.save(user);
     }
 
 
+
+
     //lay thong tin cua ban than
-    public UserResponse getMyInfo(){
+    public User getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByEmail(name).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
-        return userMapper.toUserResponse(user);
+        return userRepository.findByEmail(name).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
 

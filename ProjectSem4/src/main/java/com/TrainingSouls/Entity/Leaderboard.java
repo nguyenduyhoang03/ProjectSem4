@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "leaderboard")
 public class Leaderboard {
     @Id
-    @Column(name = "UserID", nullable = false)
+    @Column(name = "UserId", nullable = false)
     private Integer UserID;
 
     @MapsId

@@ -15,18 +15,18 @@ import java.time.LocalDate;
 @Table(name = "vipsubscriptions")
 public class Vipsubscription {
     @Id
-    @Column(name = "SubscriptionID", nullable = false)
-    private Integer SubscriptionID;
+    @Column(name = "SubscriptionId", nullable = false)
+    private Integer SubscriptionId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserID", nullable = false)
-    private User userID;
+    @JoinColumn(name = "UserId", nullable = false)
+    private User userId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "RewardID", nullable = false)
-    private Reward rewardID;
+    @JoinColumn(name = "RewardId", nullable = false)
+    private Reward rewardId;
 
     @Column(name = "StartDate", nullable = false)
     private LocalDate startDate;

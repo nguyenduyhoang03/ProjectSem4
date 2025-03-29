@@ -14,18 +14,18 @@ import java.time.LocalDate;
 @Table(name = "progress")
 public class Progress {
     @Id
-    @Column(name = "ProgressID", nullable = false)
-    private Integer ProgressID;
+    @Column(name = "ProgressId", nullable = false)
+    private Integer ProgressId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserID", nullable = false)
-    private User userID;
+    @JoinColumn(name = "UserId", nullable = false)
+    private User userId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "WorkoutID", nullable = false)
-    private Workout workoutID;
+    @JoinColumn(name = "WorkoutId", nullable = false)
+    private Workout workoutId;
 
     @Column(name = "Date", nullable = false)
     private LocalDate date;

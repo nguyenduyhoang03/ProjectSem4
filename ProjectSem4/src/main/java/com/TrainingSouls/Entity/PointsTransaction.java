@@ -16,9 +16,9 @@ import java.time.Instant;
 @Table(name = "pointstransactions")
 public class PointsTransaction {
     @Id
-    @Column(name = "TransactionID", nullable = false)
+    @Column(name = "TransactionId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer TransactionID;
+    private Integer TransactionId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

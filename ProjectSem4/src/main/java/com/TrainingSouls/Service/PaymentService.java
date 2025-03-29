@@ -4,8 +4,6 @@ import com.TrainingSouls.Configuration.VNPAYConfig;
 import com.TrainingSouls.DTO.Response.*;
 import com.TrainingSouls.Entity.PointsTransaction;
 import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Repository.PointsTransactionRepository;
-import com.TrainingSouls.Repository.UserRepository;
 import com.TrainingSouls.Utils.JWTUtils;
 import com.TrainingSouls.Utils.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +45,7 @@ public class PaymentService {
         PointsTransaction transaction = pointsTransactionService.create(user,amount);
 
         // Lấy TransactionID do database tạo ra
-        Integer transactionId = transaction.getTransactionID();
+        Integer transactionId = transaction.getTransactionId();
 
         // Gọi VNPay
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();

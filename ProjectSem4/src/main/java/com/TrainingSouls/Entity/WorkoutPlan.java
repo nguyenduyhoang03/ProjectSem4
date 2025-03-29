@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "workout_plan")
 @Getter
@@ -35,6 +37,25 @@ public class WorkoutPlan {
 
     @Column(name = "reps", nullable = false)
     private Integer reps;
+
+    @Column(name = "duration")
+    private Integer duration;
+
+    @Column(name = "distance")
+    private Double distance;
+
+    @Column(name = "workout_date", nullable = false)
+    private LocalDate workoutDate;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private WorkoutStatus status = WorkoutStatus.NOT_STARTED;
+
+
+    public enum WorkoutStatus {
+        NOT_STARTED, NOT_COMPLETED, MISSED, COMPLETED;
+    }
+
 
 }
 

@@ -1,9 +1,10 @@
 package com.TrainingSouls.DTO.Request;
 
 
+import com.TrainingSouls.Entity.Role;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -11,6 +12,5 @@ import java.util.List;
 @Builder
 public class UserUpdate {
     private String name;
-    private String password;
-    List<String> roles;
+    private Set<String> roles;
 }
