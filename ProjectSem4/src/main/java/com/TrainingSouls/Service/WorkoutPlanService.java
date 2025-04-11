@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -56,44 +57,83 @@ public class WorkoutPlanService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "UserProfile not found"));
 
         List<Exercise> exercises = exerciseRepository.findAll();
+
+        if (exercises.size() < 4) {
+            throw new IllegalStateException("Cần ít nhất 4 bài tập để tạo lịch luyện tập.");
+        }
+
         List<WorkoutPlan> workoutPlans = new ArrayList<>();
         List<WorkoutPlanDTO> result = new ArrayList<>();
-        Random random = new Random();
-
         LocalDate startDate = LocalDate.now(); // Ngày bắt đầu lịch tập
 
         for (int i = 0; i < 30; i++) {
-            LocalDate workoutDate = startDate.plusDays(i); // Tính ngày tập dựa vào ngày bắt đầu
+            LocalDate workoutDate = startDate.plusDays(i);
 
-            if (i % 7 == 3 || i % 7 == 6) { // Nghỉ vào thứ 4 và Chủ nhật (i % 7 bắt đầu từ 0)
+            // Nghỉ vào thứ 4 và Chủ nhật (i % 7 = 3 là Thứ 4, 6 là Chủ nhật)
+            if (i % 7 == 3 || i % 7 == 6) {
                 WorkoutPlan restDayPlan = new WorkoutPlan(null, userProfile.getUser(), null, i + 1, 0, 0, 0, 0.0, workoutDate, WorkoutPlan.WorkoutStatus.NOT_STARTED);
                 workoutPlans.add(restDayPlan);
 
-                result.add(new WorkoutPlanDTO(i + 1, "", "", "Nghỉ ngơi", 0, 0, 0, true, 0.0,workoutDate ,WorkoutPlan.WorkoutStatus.COMPLETED));
+                result.add(new WorkoutPlanDTO(i + 1, "", "", "Nghỉ ngơi", 0, 0, 0, true, 0.0, workoutDate, WorkoutPlan.WorkoutStatus.COMPLETED));
                 continue;
             }
 
-            Exercise exercise = exercises.get(random.nextInt(exercises.size()));
-            int sets = 0, reps = 0, duration = 0;
-            double distance = 0.0;
+            // Shuffle danh sách bài tập để tránh trùng lặp trong cùng 1 ngày
+            Collections.shuffle(exercises);
 
-            if (exercise.getName().equalsIgnoreCase("Chạy bộ")) {
-                distance = getRunningDistance(userProfile);
-                duration = calculateRunningTime(userProfile, distance);
-            } else {
-                sets = calculateSets(userProfile);
-                reps = calculateReps(userProfile);
+            for (int j = 0; j < 4; j++) {
+                Exercise exercise = exercises.get(j); // Lấy 4 bài đầu sau khi xáo trộn
+                int sets = 0, reps = 0, duration = 0;
+                double distance = 0.0;
+
+                if (exercise.getName().equalsIgnoreCase("Chạy bộ")) {
+                    distance = getRunningDistance(userProfile);
+                    duration = calculateRunningTime(userProfile, distance);
+                } else {
+                    sets = calculateSets(userProfile);
+                    reps = calculateReps(userProfile);
+                }
+
+                // chuyển status sang NOT_COMPLETED với bài tập ngày hôm nay
+                WorkoutPlan.WorkoutStatus initialStatus =
+                        workoutDate.equals(LocalDate.now()) ? WorkoutPlan.WorkoutStatus.NOT_COMPLETED : WorkoutPlan.WorkoutStatus.NOT_STARTED;
+
+                WorkoutPlan workoutPlan = new WorkoutPlan(
+                        null,
+                        userProfile.getUser(),
+                        exercise,
+                        i + 1,
+                        sets,
+                        reps,
+                        duration,
+                        distance,
+                        workoutDate,
+                        initialStatus
+                );
+
+                workoutPlans.add(workoutPlan);
+
+                result.add(new WorkoutPlanDTO(
+                        i + 1,
+                        exercise.getImg(),
+                        exercise.getIcon(),
+                        exercise.getName(),
+                        sets,
+                        reps,
+                        duration,
+                        false,
+                        distance,
+                        workoutDate,
+                        initialStatus
+                ));
             }
-
-            WorkoutPlan workoutPlan = new WorkoutPlan(null, userProfile.getUser(), exercise, i + 1, sets, reps, duration, distance, workoutDate, WorkoutPlan.WorkoutStatus.NOT_STARTED);
-            workoutPlans.add(workoutPlan);
-
-            result.add(new WorkoutPlanDTO(i + 1, exercise.getImg(), exercise.getIcon(), exercise.getName(), sets, reps, duration, false, distance, workoutDate, WorkoutPlan.WorkoutStatus.NOT_STARTED));
         }
 
         workoutPlanRepository.saveAll(workoutPlans);
         return result;
     }
+
+
 
 
 

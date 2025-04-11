@@ -2,6 +2,7 @@ package com.TrainingSouls.Service;
 
 import com.TrainingSouls.DTO.Response.PointsTransactionDTO;
 import com.TrainingSouls.Entity.PointsTransaction;
+import com.TrainingSouls.Entity.StoreItem;
 import com.TrainingSouls.Entity.User;
 import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
@@ -33,6 +34,19 @@ public class PointsTransactionService {
         transaction.setStatus(PointsTransaction.TransactionStatus.PENDING);
         return pointsTransactionRepository.save(transaction);
     }
+
+    public PointsTransaction createPurchaseTransaction(User user, StoreItem item) {
+        PointsTransaction transaction = new PointsTransaction();
+        transaction.setUser(user);
+        transaction.setType(PointsTransaction.TransactionType.SPEND);
+        transaction.setPoints(item.getPrice());
+        transaction.setItemId(item.getItemId());
+        transaction.setDate(Instant.now());
+        transaction.setDescription("Thanh toán item: " + item.getName());
+        transaction.setStatus(PointsTransaction.TransactionStatus.PENDING);
+        return pointsTransactionRepository.save(transaction);
+    }
+
 
 
     public PointsTransaction getById(int id){

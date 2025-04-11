@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WorkoutResultRequest {
+    private String exerciseName;
     private Integer dayNumber;
     private Integer setsCompleted = 0;
     private Integer repsCompleted = 0;

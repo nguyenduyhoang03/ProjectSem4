@@ -58,9 +58,12 @@ public class User {
     @PrePersist
     public void generateId() {
         if (this.userID == null) {
-            this.userID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+            this.userID = (long) Math.toIntExact(Math.abs(UUID.randomUUID().getMostSignificantBits() % 900000000) + 100000000);
+            System.out.println("Generated userID: " + this.userID);
         }
     }
+
+
 
 
 }

@@ -13,26 +13,32 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "leaderboard")
 public class Leaderboard {
     @Id
-    @Column(name = "UserId", nullable = false)
-    private Integer UserID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserID", nullable = false)
-    private User users;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "UserID", nullable = false, unique = true)
+    private User user;
 
-    @ColumnDefault("0")
-    @Column(name = "LifePoints")
-    private Integer lifePoints;
+    @Column(name = "strength_score", nullable = false)
+    private int strengthScore;
 
-    @ColumnDefault("0")
-    @Column(name = "Power")
-    private Integer power;
+    @Column(name = "endurance_score", nullable = false)
+    private int enduranceScore;
 
-    @ColumnDefault("'Bronze'")
-    @Lob
-    @Column(name = "Rank")
-    private String rank;
+    @Column(name = "health_score", nullable = false)
+    private int healthScore;
+
+    @Column(name = "agility_score", nullable = false)
+    private int agilityScore;
+
+    @Column(name = "deathpoints", nullable = false)
+    private int deathpoints;
+
+    @Column(name = "total_score", nullable = false)
+    private Double totalScore;
+
+    @Column(name = "user_rank", nullable = false)
+    private int rank;
 
 }

@@ -40,7 +40,8 @@ public class SecurityConfig {
             "posts/{postId}",
             "/payment/**",
             "/items",
-            "/items/{id}"
+            "/items/{id}",
+            "/ranks/**"
     };
 
 

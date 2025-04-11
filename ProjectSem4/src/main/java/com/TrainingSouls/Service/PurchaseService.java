@@ -5,15 +5,19 @@ import com.TrainingSouls.Entity.StoreItem;
 import com.TrainingSouls.Entity.User;
 import com.TrainingSouls.Entity.UserItem;
 import com.TrainingSouls.Repository.PointsTransactionRepository;
+import com.TrainingSouls.Repository.UserItemRepository;
 import com.TrainingSouls.Repository.UserRepository;
 import com.TrainingSouls.Utils.JWTUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +25,7 @@ public class PurchaseService {
     private final StoreItemService storeItemService;
     private final PointsTransactionRepository pointsTransactionRepository;
     private final UserRepository userRepository;
+    private final UserItemRepository userItemRepository;
 
     @Transactional
     public String purchaseItem(HttpServletRequest request, Integer itemId){
@@ -52,6 +57,7 @@ public class PurchaseService {
         UserItem userItem = new UserItem();
         userItem.setUser(user);
         userItem.setItemId(itemId);
+        userItem.setExpirationDate(LocalDate.now().plusDays(item.getDurationInDays()));
         user.getPurchasedItems().add(userItem);
 
         userRepository.save(user);
@@ -70,5 +76,15 @@ public class PurchaseService {
 
         return "Purchase Success";
     }
+
+    @Scheduled(cron = "0 5 0 * * *")
+    @Transactional
+    public void deleteExpiredItems() {
+        LocalDate now = LocalDate.now();
+        List<UserItem> expiredItems = userItemRepository.findByExpirationDateBefore(now);
+
+        userItemRepository.deleteAll(expiredItems);
+    }
+
 
 }

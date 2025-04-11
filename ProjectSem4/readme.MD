@@ -28,9 +28,9 @@ This microservice is responsible for:
 ### Create network:
 `docker network create training-network`
 ### Start MySQL in devteria-network
-`docker run --network training-network --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=2003 -d mysql:8.0.36-debian`
+`sudo docker run --network training-network --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=2003 -d mysql:8.0.36-debian`
 ### Run your application in devteria-network
-`docker run --name training-service --network training-network -p 8080:8080 -e DBMS_CONNECTION=jdbc:mysql://mysql:3306/project_sem4 nguyenduyhoang03/training-service:0.1.3`
+`sudo docker run --name training-service --network training-network -p 8080:8080 -e DBMS_CONNECTION=jdbc:mysql://mysql:3306/project_sem4 nguyenduyhoang03/training-service:0.1.5`
 
 ## Install Docker on ubuntu
 

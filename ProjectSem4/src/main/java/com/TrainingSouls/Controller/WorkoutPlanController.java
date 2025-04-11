@@ -1,5 +1,6 @@
 package com.TrainingSouls.Controller;
 
+import com.TrainingSouls.DTO.Request.DailyWorkoutResultRequest;
 import com.TrainingSouls.DTO.Request.WorkoutResultRequest;
 import com.TrainingSouls.DTO.Response.WorkoutPlanDTO;
 import com.TrainingSouls.Entity.WorkoutPlan;
@@ -31,8 +32,8 @@ public class WorkoutPlanController {
     }
 
     @PostMapping("/workout-results")
-    public String submitWorkoutResult(HttpServletRequest httpServletRequest, @RequestBody WorkoutResultRequest request) {
-        return workoutResultService.saveWorkoutResult(httpServletRequest,request);
+    public String submitWorkoutResult(HttpServletRequest httpServletRequest, @RequestBody DailyWorkoutResultRequest request) {
+        return workoutResultService.saveDailyWorkoutResults(httpServletRequest,request);
     }
 
     @GetMapping("/check-missed-workouts")

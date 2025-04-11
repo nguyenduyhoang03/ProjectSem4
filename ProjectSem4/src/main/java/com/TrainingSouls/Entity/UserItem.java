@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,6 +27,10 @@ public class UserItem {
     private User user;
 
     private Integer itemId;
-    private LocalDateTime purchasedAt = LocalDateTime.now(); // Lưu thời gian mua
+
+    private LocalDateTime purchasedAt = LocalDateTime.now();
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
 }
 

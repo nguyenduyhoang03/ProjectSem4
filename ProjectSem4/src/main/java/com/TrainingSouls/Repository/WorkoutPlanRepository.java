@@ -25,7 +25,8 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Intege
             "ORDER BY wp.workoutDate, wp.dayNumber")
     List<WorkoutPlanDTO> getWorkoutPlanByUserId(@Param("userId") Long userId);
 
-    Optional<WorkoutPlan> findByUserUserIDAndDayNumber(Long userId, Integer dayNumber);
+    Optional<WorkoutPlan> findByUserUserIDAndDayNumberAndExerciseId(Long userId, Integer dayNumber, Long exerciseId);
+
 
     // Lấy danh sách các bài tập đã quá hạn nhưng chưa hoàn thành
     List<WorkoutPlan> findByWorkoutDateBeforeAndStatusNot(LocalDate date, WorkoutPlan.WorkoutStatus status);
@@ -40,4 +41,5 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Intege
     long countMissedDaysInRow(@Param("userId") Long userId, @Param("startDate") LocalDate startDate);
 
 
+    List<WorkoutPlan> findByWorkoutDateAndStatus(LocalDate today, WorkoutPlan.WorkoutStatus workoutStatus);
 }

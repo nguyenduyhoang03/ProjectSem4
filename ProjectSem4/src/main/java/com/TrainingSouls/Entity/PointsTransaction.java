@@ -16,9 +16,9 @@ import java.time.Instant;
 @Table(name = "pointstransactions")
 public class PointsTransaction {
     @Id
-    @Column(name = "TransactionId", nullable = false)
+    @Column(name = "transactionId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer TransactionId;
+    private Integer transactionId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -44,6 +44,9 @@ public class PointsTransaction {
     @Enumerated(EnumType.STRING) // Thêm trạng thái giao dịch
     @Column(name = "Status", nullable = false)
     private TransactionStatus status;
+
+    @Column(name = "item_id")
+    private Integer itemId;
 
     public enum TransactionType {
         EARN, SPEND

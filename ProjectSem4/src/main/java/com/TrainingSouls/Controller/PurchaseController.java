@@ -17,4 +17,9 @@ public class PurchaseController {
     public String buyItem(HttpServletRequest request, @PathVariable Integer itemId) {
         return purchaseService.purchaseItem(request, itemId);
     }
+
+    @DeleteMapping("/deleteExpiredItems")
+    public void deleteExpiredItems(HttpServletRequest request) {
+        purchaseService.deleteExpiredItems();
+    }
 }

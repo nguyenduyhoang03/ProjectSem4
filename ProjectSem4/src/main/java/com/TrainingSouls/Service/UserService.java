@@ -75,20 +75,27 @@ public class UserService {
     }
 
 
-    public User updateUser(Long userId, UserUpdate request) {
+    @Transactional
+    public User updateUser(Long userId, UserUpdate userUpdate) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setName(request.getName());
+        if (userUpdate.getName() != null) {
+            user.setName(userUpdate.getName());
+        }
 
-        Set<Role> roles = request.getRoles().stream()
-                .map(roleName -> roleRepository.findById(roleName)
-                        .orElseThrow(() -> new RuntimeException("Role not found")))
-                .collect(Collectors.toSet());
+        if (userUpdate.getRoles() != null && !userUpdate.getRoles().isEmpty()) {
+            Set<Role> roles = userUpdate.getRoles().stream()
+                    .map(roleName -> roleRepository.findById(roleName)
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
 
-        user.setRoles(roles);
         return userRepository.save(user);
     }
+
+
 
 
 

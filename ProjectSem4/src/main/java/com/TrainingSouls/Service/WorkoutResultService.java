@@ -1,15 +1,10 @@
 package com.TrainingSouls.Service;
 
+import com.TrainingSouls.DTO.Request.DailyWorkoutResultRequest;
 import com.TrainingSouls.DTO.Request.WorkoutResultRequest;
-import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Entity.UserProfile;
-import com.TrainingSouls.Entity.WorkoutPlan;
-import com.TrainingSouls.Entity.WorkoutResult;
+import com.TrainingSouls.Entity.*;
 import com.TrainingSouls.Exception.ErrorCode;
-import com.TrainingSouls.Repository.UserProfileRepository;
-import com.TrainingSouls.Repository.UserRepository;
-import com.TrainingSouls.Repository.WorkoutPlanRepository;
-import com.TrainingSouls.Repository.WorkoutResultRepository;
+import com.TrainingSouls.Repository.*;
 import com.TrainingSouls.Utils.JWTUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -29,44 +24,63 @@ public class WorkoutResultService {
     private final WorkoutPlanRepository workoutPlanRepository;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+    private final ExerciseRepository exerciseRepository;
 
     @Transactional
-    public String saveWorkoutResult(HttpServletRequest httpServletRequest, WorkoutResultRequest request) {
+    public String saveDailyWorkoutResults(HttpServletRequest httpServletRequest, DailyWorkoutResultRequest request) {
         long userId = JWTUtils.getSubjectFromRequest(httpServletRequest);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_FOUND.getMessage()));
 
-        WorkoutPlan workoutPlan = workoutPlanRepository.findByUserUserIDAndDayNumber(userId, request.getDayNumber())
-                .orElseThrow(() -> new RuntimeException("Workout Plan not found for the given day"));
+        boolean allCompleted = true;
 
-        // Kiểm tra xem bài tập đã được hoàn thành theo kế hoạch chưa
-        String status = determineStatus(workoutPlan, request);
+        for (WorkoutResultRequest resultRequest : request.getResults()) {
 
-        WorkoutResult workoutResult = new WorkoutResult();
-        workoutResult.setUser(user);
-        workoutResult.setWorkoutPlan(workoutPlan);
-        workoutResult.setSetsCompleted(request.getSetsCompleted());
-        workoutResult.setRepsCompleted(request.getRepsCompleted());
-        workoutResult.setDistanceCompleted(request.getDistanceCompleted());
-        workoutResult.setDurationCompleted(request.getDurationCompleted());
-        workoutResult.setStatus(WorkoutPlan.WorkoutStatus.valueOf(status));
-        workoutResult.setCreatedAt(LocalDateTime.now());
+            // Lấy bài tập theo tên
+            Exercise exercise = exerciseRepository.findByNameIgnoreCase(resultRequest.getExerciseName())
+                    .orElseThrow(() -> new RuntimeException("Exercise not found: " + resultRequest.getExerciseName()));
 
-        workoutResult = workoutResultRepository.save(workoutResult);
+            // Lấy kế hoạch tập luyện theo ngày, người dùng và bài tập
+            WorkoutPlan workoutPlan = workoutPlanRepository
+                    .findByUserUserIDAndDayNumberAndExerciseId(userId, request.getDayNumber(), exercise.getId())
+                    .orElseThrow(() -> new RuntimeException("Workout Plan not found for exercise: " + exercise.getName()));
 
-        // Cập nhật status của plan
-        if ("completed".equals(status)) {
-            workoutPlan.setStatus(WorkoutPlan.WorkoutStatus.COMPLETED);
+            String status = determineStatus(workoutPlan, resultRequest);
+
+            WorkoutResult workoutResult = new WorkoutResult();
+            workoutResult.setUser(user);
+            workoutResult.setWorkoutPlan(workoutPlan);
+            workoutResult.setSetsCompleted(resultRequest.getSetsCompleted());
+            workoutResult.setRepsCompleted(resultRequest.getRepsCompleted());
+            workoutResult.setDistanceCompleted(resultRequest.getDistanceCompleted());
+            workoutResult.setDurationCompleted(resultRequest.getDurationCompleted());
+            workoutResult.setStatus(WorkoutPlan.WorkoutStatus.valueOf(status.toUpperCase()));
+            workoutResult.setCreatedAt(LocalDateTime.now());
+
+            workoutResultRepository.save(workoutResult);
+
+            // Cập nhật trạng thái kế hoạch
+            WorkoutPlan.WorkoutStatus planStatus = WorkoutPlan.WorkoutStatus.valueOf(status.toUpperCase());
+            workoutPlan.setStatus(planStatus);
             workoutPlanRepository.save(workoutPlan);
-            updateUserStats(userId, workoutPlan.getExercise().getName());
-        } else if ("not_completed".equals(status)) {
-            workoutPlan.setStatus(WorkoutPlan.WorkoutStatus.NOT_COMPLETED);
-            workoutPlanRepository.save(workoutPlan);
+
+            if (planStatus != WorkoutPlan.WorkoutStatus.COMPLETED) {
+                allCompleted = false;
+            } else {
+                updateUserStats(userId, exercise.getName());
+            }
+        }
+
+        // Logic cộng điểm tổng nếu tất cả hoàn thành
+        if (allCompleted) {
+            // TODO: Thêm cộng điểm chung tại đây nếu cần
         }
 
         return "Success";
     }
+
+
 
 
     private void updateUserStats(Long userId, String exerciseName) {
@@ -116,8 +130,24 @@ public class WorkoutResultService {
         return "not_completed";
     }
 
+    @Scheduled(cron = "0 3 0 * * ?") // Chạy mỗi ngày lúc 00:01
+    @Transactional
+    public void updateWorkoutStatusToNotCompleted() {
+        LocalDate today = LocalDate.now();
 
-    @Scheduled(cron = "59 59 23 * * ?") // Chạy mỗi ngày vào 23:59
+        // Tìm các bài tập hôm nay đang có trạng thái NOT_STARTED
+        List<WorkoutPlan> todayPlans = workoutPlanRepository
+                .findByWorkoutDateAndStatus(today, WorkoutPlan.WorkoutStatus.NOT_STARTED);
+
+        for (WorkoutPlan plan : todayPlans) {
+            plan.setStatus(WorkoutPlan.WorkoutStatus.NOT_COMPLETED);
+        }
+
+    }
+
+
+
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy mỗi ngày vào 00:00
     @Transactional
     public void checkMissedWorkouts() {
         LocalDate today = LocalDate.now();
