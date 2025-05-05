@@ -42,7 +42,7 @@ public class PointsTransactionService {
         transaction.setPoints(item.getPrice());
         transaction.setItemId(item.getItemId());
         transaction.setDate(Instant.now());
-        transaction.setDescription("Thanh toán item: " + item.getName());
+        transaction.setDescription("Thanh toán item: " + item.getName() + " qua VNPAY");
         transaction.setStatus(PointsTransaction.TransactionStatus.PENDING);
         return pointsTransactionRepository.save(transaction);
     }

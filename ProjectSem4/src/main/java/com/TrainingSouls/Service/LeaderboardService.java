@@ -49,7 +49,9 @@ public class LeaderboardService {
             int deathPoints = profile.getDeathPoints();
 
             //tinh diem
-            double totalScore = (strength * 1.2 + endurance * 1.2 + agility + health) - (deathPoints * 2);
+            double totalScore = (strength * 1.2 + endurance * 1.2 + agility + health) - (deathPoints);
+            totalScore = Math.max(0, totalScore);
+
 
             Leaderboard leaderboard = leaderboardRepository.findByUser(user).orElse(new Leaderboard());
             leaderboard.setUser(user);

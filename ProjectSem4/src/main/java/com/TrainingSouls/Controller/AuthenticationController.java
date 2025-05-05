@@ -32,6 +32,14 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/refresh-token")
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody IntrospectRequest token) throws ParseException, JOSEException {
+        var result = authenticationService.refreshAccessToken(token.getToken());
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/logout")
     public ApiResponse<Void> logout(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);

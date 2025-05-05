@@ -77,6 +77,42 @@ public class AuthenticationService {
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
+    public AuthenticationResponse refreshAccessToken(String oldToken) throws JOSEException, ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(oldToken);
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        boolean isVerified = signedJWT.verify(verifier);
+        if (!isVerified) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        // Kiểm tra token còn hạn không
+        Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
+        if (expiration.before(new Date())) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        // Check nếu token đã bị thu hồi (logout)
+        String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
+        if (invalidatedTokenRepository.existsById(jwtId)) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        // Lấy thông tin user
+        String email = signedJWT.getJWTClaimsSet().getSubject();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        // Tạo token mới
+        String newToken = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(newToken)
+                .success(true)
+                .build();
+    }
+
+
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());

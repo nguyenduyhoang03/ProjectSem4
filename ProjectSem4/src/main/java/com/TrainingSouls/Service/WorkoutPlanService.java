@@ -140,22 +140,22 @@ public class WorkoutPlanService {
 
     private int calculateSets(UserProfile userProfile) {
         return switch (userProfile.getLevel().toLowerCase()) {
-            case "beginner" -> 3;
-            case "intermediate" -> 4;
-            case "advanced" -> 5;
-            default -> 3;
+            case "beginner" -> 2;
+            case "intermediate" -> 3;
+            case "advanced" -> 4;
+            default -> 2;
         };
     }
 
     private int calculateReps(UserProfile userProfile) {
         double bmi = userProfile.getBmi();
 
-        if (bmi < 18.5) return 12;      // Gầy
-        if (bmi >= 18.5 && bmi < 25) return 15; // Bình thường
-        if (bmi >= 25 && bmi < 30) return 12; // Thừa cân
-        if (bmi >= 30 && bmi < 35) return 10; // Béo phì độ 1
-        if (bmi >= 35 && bmi < 40) return 8;  // Béo phì độ 2
-        return 6;                          // Béo phì độ 3
+        if (bmi < 18.5) return 8;      // Gầy
+        if (bmi < 25) return 12;       // Bình thường
+        if (bmi < 30) return 10;       // Thừa cân
+        if (bmi < 35) return 8;        // Béo phì độ 1
+        if (bmi < 40) return 6;        // Béo phì độ 2
+        return 4;                      // Béo phì độ 3
     }
 
 
@@ -170,10 +170,10 @@ public class WorkoutPlanService {
 
     private int calculateRunningTime(UserProfile userProfile, double distance) {
         double pace = switch (userProfile.getLevel().toLowerCase()) {
-            case "beginner" -> 8.0;  // 8 phút/km
-            case "intermediate" -> 6.5;
-            case "advanced" -> 5.5;
-            default -> 8.0;
+            case "beginner" -> 10.0;  // 8 phút/km
+            case "intermediate" -> 8.0;
+            case "advanced" -> 6.0;
+            default -> 10.0;
         };
         return (int) Math.round(distance * pace); // Tổng thời gian chạy
     }

@@ -5,11 +5,11 @@ import com.TrainingSouls.DTO.Request.UserCreationReq;
 import com.TrainingSouls.DTO.Request.UserProfileDTO;
 import com.TrainingSouls.DTO.Request.UserUpdate;
 import com.TrainingSouls.DTO.Response.ApiResponse;
-import com.TrainingSouls.DTO.Response.UserResponse;
+import com.TrainingSouls.DTO.Response.PurchasedItemResponse;
 import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Entity.UserProfile;
 import com.TrainingSouls.Service.UserProfileService;
 import com.TrainingSouls.Service.UserService;
+import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Slf4j
@@ -56,6 +57,17 @@ public class UserController {
     @GetMapping("/getMyInfo")
     public ApiResponse<User> getMyInfo() {
         return ApiResponse.<User>builder().result(userService.getMyInfo()).build();
+    }
+
+    @GetMapping("/getMyPurchasedItem")
+    public ApiResponse<List<PurchasedItemResponse>> getMyPurchasedItem() {
+        return ApiResponse.<List<PurchasedItemResponse>>builder().result(userService.getMyPurchasedItems()).build();
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestBody @Valid ChangePassword request, HttpServletRequest httpServletRequest) throws ParseException, JOSEException {
+        return userService.changePassword(request,httpServletRequest);
+
     }
 
     @PutMapping("/{userId}")
