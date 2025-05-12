@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface UserItemRepository extends JpaRepository<UserItem, Long> {
     List<UserItem> findByExpirationDateBefore(LocalDate now);
-    Optional<UserItem> findByUserIdAndItemId(Long userId, Integer itemId);
+    Optional<UserItem> findByUserUserIDAndItemId(Long userId, Integer itemId);
 
 }

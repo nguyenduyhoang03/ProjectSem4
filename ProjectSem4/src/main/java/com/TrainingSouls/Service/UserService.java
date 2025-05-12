@@ -68,6 +68,7 @@ public class UserService {
         user.setPoints(0);
         user.setLevel(1);
         user.setAccountType("basic");
+        user.setStreak(0);
 
         return userRepository.save(user);
     }

@@ -35,4 +35,12 @@ public class StoreItem {
     @Column(name = "DurationInDays")
     private Integer durationInDays;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ItemType", nullable = false)
+    private StoreItemType itemType;
+
+    public enum StoreItemType {
+        SUBSCRIPTION,
+        AVATAR
+    }
 }

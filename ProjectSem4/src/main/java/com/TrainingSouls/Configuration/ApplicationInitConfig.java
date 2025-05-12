@@ -34,6 +34,9 @@ public class ApplicationInitConfig {
                         .email("admin@gmail.com")
                         .password(passwordEncoder.encode("12345678"))
 //                        .roles(roles)
+                        .accountType("Premium")
+                        .points(99999999)
+                        .level(99)
                         .build();
                 userRepository.save(user);
                 log.warn("Đã tạo tài khoản ADMIN");

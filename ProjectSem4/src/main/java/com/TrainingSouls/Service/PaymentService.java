@@ -25,8 +25,7 @@ public class PaymentService {
     private final UserService userService;
     private final PointsTransactionService pointsTransactionService;
     private final StoreItemService storeItemService;
-    private final UserRepository userRepository;
-    private final UserItemRepository userItemRepository;
+    private final PurchaseService purchaseService;
 
 
 
@@ -76,25 +75,23 @@ public class PaymentService {
         if ("00".equals(responseCode)) {
             transaction.setStatus(PointsTransaction.TransactionStatus.SUCCESS);
 
-            User user = transaction.getUser();
+
+            Long userId = transaction.getUser().getUserID();
             Integer itemId = transaction.getItemId();
-            StoreItem item = storeItemService.getById(itemId);
 
-            UserItem userItem = new UserItem();
-            userItem.setUser(user);
-            userItem.setItemId(itemId);
-            userItem.setExpirationDate(LocalDate.now().plusDays(item.getDurationInDays()));
-            user.getPurchasedItems().add(userItem);
-
-            userRepository.save(user);
+            purchaseService.handleSuccessfulPurchase(userId, itemId);
         } else {
             transaction.setStatus(PointsTransaction.TransactionStatus.FAILED);
+
         }
 
-
-        return new ResponseObject<>(HttpStatus.OK, "Payment processed",
-                new PaymentDTO.VNPayResponse(responseCode, "Transaction updated", "http://localhost:3000"));
+        return new ResponseObject<>(
+                HttpStatus.OK,
+                "Payment processed",
+                new PaymentDTO.VNPayResponse(responseCode, "Transaction updated", "http://localhost:3000")
+        );
     }
+
 
 
 }

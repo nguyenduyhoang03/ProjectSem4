@@ -44,6 +44,10 @@ public class User {
     @Column(name = "Level")
      Integer level = 1;
 
+    @ColumnDefault("0")
+    @Column(name = "streak")
+    Integer streak = 0;
+
     @ManyToMany
     Set<Role> roles;
 
@@ -62,8 +66,6 @@ public class User {
             System.out.println("Generated userID: " + this.userID);
         }
     }
-
-
 
 
 }

@@ -19,15 +19,21 @@ public class PurchaseController {
 
     @PostMapping("/{itemId}")
     public String buyItem(HttpServletRequest request, @PathVariable Integer itemId) {
-        return purchaseService.purchaseItem(request, itemId);
+        return purchaseService.purchaseItemByPoints(request, itemId);
     }
 
     @PostMapping("/complete")
-    public ResponseEntity<ResponseObject<String>> completePurchase(
+    public ResponseEntity<ResponseObject<String>> completePaypalPurchase(
             HttpServletRequest request,
             @RequestBody PurchaseRequest purchaseRequest) {
 
-        purchaseService.completedPurchaseItem(request, purchaseRequest);
+        purchaseService.completePaypalPurchase(request, purchaseRequest);
+        return ResponseEntity.ok(new ResponseObject<>(HttpStatus.OK, "Purchase completed successfully", null));
+    }
+
+    @PostMapping("/stripeCompleted")
+    public ResponseEntity<ResponseObject<String>> completeStripePurchase(HttpServletRequest request, @RequestBody PurchaseRequest purchaseRequest) {
+        purchaseService.completeStripePurchase(request, purchaseRequest);
         return ResponseEntity.ok(new ResponseObject<>(HttpStatus.OK, "Purchase completed successfully", null));
     }
 

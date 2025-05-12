@@ -14,7 +14,7 @@ public enum ErrorCode {
     NOT_FOUND(404, "Not Found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(401, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "You do not have permission", HttpStatus.FORBIDDEN),
-    PAYMENT_VERIFICATION_FAILED(400,"Giao dịch Paypal không hợp lệ", HttpStatus.BAD_REQUEST)
+    PAYMENT_VERIFICATION_FAILED(400,"Giao dịch không hợp lệ", HttpStatus.BAD_REQUEST)
     ;
 
 

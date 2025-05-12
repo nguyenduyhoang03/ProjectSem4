@@ -2,8 +2,10 @@ package com.TrainingSouls.Service;
 
 import com.TrainingSouls.DTO.Request.DailyWorkoutResultRequest;
 import com.TrainingSouls.DTO.Request.WorkoutResultRequest;
+import com.TrainingSouls.DTO.Response.WorkoutResultDTO;
 import com.TrainingSouls.Entity.*;
 import com.TrainingSouls.Exception.ErrorCode;
+import com.TrainingSouls.Mapper.WorkoutResultMapper;
 import com.TrainingSouls.Repository.*;
 import com.TrainingSouls.Utils.JWTUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class WorkoutResultService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final ExerciseRepository exerciseRepository;
+    private final WorkoutResultMapper mapper;
 
     @Transactional
     public String saveDailyWorkoutResults(HttpServletRequest httpServletRequest, DailyWorkoutResultRequest request) {
@@ -74,7 +78,16 @@ public class WorkoutResultService {
 
         // Logic cộng điểm tổng nếu tất cả hoàn thành
         if (allCompleted) {
-            // TODO: Thêm cộng điểm chung tại đây nếu cần
+            Optional<UserProfile> userProfileOpt = userProfileRepository.findByUserUserID(userId);
+            userProfileOpt.ifPresent(profile -> {
+                profile.setStrength(profile.getStrength() + 1);
+                profile.setEndurance(profile.getEndurance() + 1);
+                profile.setHealth(profile.getHealth() + 1);
+                profile.setAgility(profile.getAgility() + 1);
+                userProfileRepository.save(profile);
+            });
+
+            user.setStreak(user.getStreak() + 1);
         }
 
         return "Success";
@@ -130,6 +143,24 @@ public class WorkoutResultService {
         return "not_completed";
     }
 
+    public List<WorkoutResultDTO> getWorkoutHistory(HttpServletRequest request, LocalDate start, LocalDate end) {
+        long userId = JWTUtils.getSubjectFromRequest(request);
+
+        List<WorkoutResult> results;
+
+        if (start != null && end != null) {
+            results = workoutResultRepository.findByUserUserIDAndCreatedAtBetweenOrderByCreatedAtDesc(userId, start.atStartOfDay(), end.atTime(23, 59, 59));
+        } else {
+            results = workoutResultRepository.findByUserUserIDOrderByCreatedAtDesc(userId);
+        }
+
+        return results.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
     @Scheduled(cron = "0 3 0 * * ?") // Chạy mỗi ngày lúc 00:01
     @Transactional
     public void updateWorkoutStatusToNotCompleted() {
@@ -164,19 +195,23 @@ public class WorkoutResultService {
                 workoutPlanRepository.save(plan);
 
                 // Cộng deathPoint nếu người dùng nghỉ 2 ngày liên tiếp
-                updateDeathPoints(plan.getUser().getUserID(), yesterday);
+                updateDeathPointsAndStreaks(plan.getUser().getUserID(), yesterday);
+
             }
         }
     }
 
-    private void updateDeathPoints(Long userId, LocalDate yesterday) {
+    private void updateDeathPointsAndStreaks(Long userId, LocalDate yesterday) {
         boolean missedYesterday = workoutPlanRepository.existsByUserUserIDAndStatusAndWorkoutDate(userId, WorkoutPlan.WorkoutStatus.MISSED, yesterday);
+
 
         UserProfile userProfile = userProfileRepository.findByUserUserID(userId).orElse(null);
         if (userProfile == null) return;
 
         if (missedYesterday) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(ErrorCode.NOT_FOUND.getMessage()));
             userProfile.setDeathPoints(userProfile.getDeathPoints() + 1);
+            user.setStreak(0);
         }
 
         // Nếu nghỉ 15 ngày liên tiếp => reset chỉ số về 1
