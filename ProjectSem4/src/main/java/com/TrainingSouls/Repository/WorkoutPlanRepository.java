@@ -25,6 +25,7 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Intege
             "ORDER BY wp.workoutDate, wp.dayNumber")
     List<WorkoutPlanDTO> getWorkoutPlanByUserId(@Param("userId") Long userId);
 
+
     Optional<WorkoutPlan> findByUserUserIDAndDayNumberAndExerciseId(Long userId, Integer dayNumber, Long exerciseId);
 
 
@@ -42,4 +43,8 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Intege
 
 
     List<WorkoutPlan> findByWorkoutDateAndStatus(LocalDate today, WorkoutPlan.WorkoutStatus workoutStatus);
+
+    void deleteByUserUserID(Long targetUserId);
+
+    void deleteByUserUserIDAndDayNumberIn(Long userId, List<Integer> dayNumbers);
 }

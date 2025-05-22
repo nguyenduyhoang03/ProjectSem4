@@ -3,10 +3,7 @@ package com.TrainingSouls.Service;
 import com.TrainingSouls.Configuration.PaypalProperties;
 import com.TrainingSouls.Configuration.StripeProperties;
 import com.TrainingSouls.DTO.Request.PurchaseRequest;
-import com.TrainingSouls.Entity.PointsTransaction;
-import com.TrainingSouls.Entity.StoreItem;
-import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Entity.UserItem;
+import com.TrainingSouls.Entity.*;
 import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Repository.PointsTransactionRepository;
@@ -39,9 +36,12 @@ public class PurchaseService {
     private final UserItemRepository userItemRepository;
     private final PaypalProperties paypalProperties;
     private final StripeProperties stripeProperties;
+    private final PurchaseTransactionService purchaseTransactionService;
+    private final EmailService emailService;
 
 
 
+    //mua item bang point
     @Transactional
     public String purchaseItemByPoints(HttpServletRequest request, Integer itemId) {
         Long userId = JWTUtils.getSubjectFromRequest(request);
@@ -75,6 +75,7 @@ public class PurchaseService {
     }
 
 
+    //ham xu ly hanh dong mua hang
     public void handleSuccessfulPurchase(Long userId, Integer itemId) {
         User user = userRepository.findById(userId).orElseThrow();
         StoreItem storeItem = storeItemRepository.findById(itemId).orElseThrow();
@@ -121,6 +122,7 @@ public class PurchaseService {
 
 
 
+    //ham xac thuc va hanh dong mua hang qua paypal
     @Transactional
     public void completePaypalPurchase(HttpServletRequest request, PurchaseRequest dto) {
         Long userId = JWTUtils.getSubjectFromRequest(request);
@@ -136,18 +138,12 @@ public class PurchaseService {
         StoreItem item = storeItemService.getById(dto.getItemId());
 
         // Ghi log giao dịch
-        PointsTransaction transaction = new PointsTransaction();
-        transaction.setUser(user);
-        transaction.setPoints(item.getPointsRequired());
-        transaction.setType(PointsTransaction.TransactionType.SPEND);
-        transaction.setDescription("Mua item " + item.getName() + " qua PayPal");
-        transaction.setDate(Instant.now());
-        transaction.setStatus(PointsTransaction.TransactionStatus.SUCCESS);
-        transaction.setItemId(dto.getItemId());
-        pointsTransactionRepository.save(transaction);
+        PurchaseTransaction transaction = purchaseTransactionService.createPurchaseTransaction(user,item, PurchaseTransaction.PaymentMethod.PAYPAL, PointsTransaction.TransactionStatus.SUCCESS);
+        emailService.sendInvoiceEmail(transaction);
 
         // Gọi xử lý chính
         handleSuccessfulPurchase(userId, dto.getItemId());
+
     }
 
 
@@ -212,6 +208,8 @@ public class PurchaseService {
         return "succeeded".equalsIgnoreCase(status);
     }
 
+
+    //ham xac thuc va hanh dong mua hang qua paypal
     @Transactional
     public void completeStripePurchase(HttpServletRequest request, PurchaseRequest dto) {
         Long userId = JWTUtils.getSubjectFromRequest(request);
@@ -226,15 +224,8 @@ public class PurchaseService {
         StoreItem item = storeItemService.getById(dto.getItemId());
 
         // Ghi log giao dịch
-        PointsTransaction transaction = new PointsTransaction();
-        transaction.setUser(user);
-        transaction.setPoints(item.getPointsRequired());
-        transaction.setType(PointsTransaction.TransactionType.SPEND);
-        transaction.setDescription("Mua item " + item.getName() + " qua Stripe");
-        transaction.setDate(Instant.now());
-        transaction.setStatus(PointsTransaction.TransactionStatus.SUCCESS);
-        transaction.setItemId(dto.getItemId());
-        pointsTransactionRepository.save(transaction);
+        PurchaseTransaction transaction = purchaseTransactionService.createPurchaseTransaction(user, item, PurchaseTransaction.PaymentMethod.STRIPE, PointsTransaction.TransactionStatus.SUCCESS);
+        emailService.sendInvoiceEmail(transaction);
 
         // Xử lý chính
         handleSuccessfulPurchase(userId, dto.getItemId());

@@ -5,10 +5,12 @@ import com.TrainingSouls.DTO.Request.IntrospectRequest;
 import com.TrainingSouls.DTO.Response.AuthenticationResponse;
 import com.TrainingSouls.DTO.Response.IntrospectResponse;
 import com.TrainingSouls.Entity.InvalidatedToken;
+import com.TrainingSouls.Entity.PasswordResetToken;
 import com.TrainingSouls.Entity.User;
 import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Repository.InvalidatedTokenRepository;
+import com.TrainingSouls.Repository.PasswordResetTokenRepository;
 import com.TrainingSouls.Repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -28,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
@@ -39,6 +42,8 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    PasswordResetTokenRepository passwordResetTokenRepository;
+    EmailService emailService;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -49,7 +54,8 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!authenticated) {
+        boolean isActive = user.getActive();
+        if (!authenticated || !isActive) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
@@ -76,6 +82,90 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(invalidatedToken);
     }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        String token = UUID.randomUUID().toString();
+
+        // Nếu đã có token trước đó, cập nhật lại
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByUser(user)
+                .orElse(new PasswordResetToken());
+
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30)); // 30 phút hết hạn
+        passwordResetTokenRepository.save(resetToken);
+
+        String resetURL = "http://54.251.220.228:8080/trainingSouls/auth/reset-password?token=" + token;
+        String content = """
+        <html>
+          <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <h2 style="color: #333333;">Yêu cầu đặt lại mật khẩu</h2>
+              <p style="font-size: 16px; color: #555555;">
+                Bạn vừa gửi yêu cầu đặt lại mật khẩu cho tài khoản TrainingSouls.
+                Nhấn vào nút bên dưới để đặt lại mật khẩu:
+              </p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="%s" style="background-color: #FF5722; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">
+                  Đặt lại mật khẩu
+                </a>
+              </div>
+              <p style="font-size: 14px; color: #888888;">
+                Nếu bạn không yêu cầu, vui lòng bỏ qua email này.
+              </p>
+            </div>
+          </body>
+        </html>
+        """.formatted(resetURL);
+
+        emailService.sendHtmlEmail(user.getEmail(), "Yêu cầu đặt lại mật khẩu - TrainingSouls", content);
+    }
+
+    public void resetPassword(String token) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        // Tạo mật khẩu mới
+        String newPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8);
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Xóa token sau khi sử dụng
+        passwordResetTokenRepository.delete(resetToken);
+
+        // Gửi email chứa mật khẩu mới
+        String content = String.format("""
+            <html>
+              <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                  <h2 style="color: #333333;">Mật khẩu mới của bạn</h2>
+                  <p style="font-size: 16px; color: #555555;">
+                    Mật khẩu mới của bạn là: <strong>%s</strong>
+                  </p>
+                  <p style="font-size: 14px; color: #888888;">
+                    Vui lòng đăng nhập và đổi mật khẩu ngay sau khi đăng nhập để đảm bảo an toàn.
+                  </p>
+                </div>
+              </body>
+            </html>
+            """, newPassword);
+
+
+        emailService.sendHtmlEmail(user.getEmail(), "Mật khẩu mới - TrainingSouls", content);
+    }
+
+
 
     public AuthenticationResponse refreshAccessToken(String oldToken) throws JOSEException, ParseException {
         SignedJWT signedJWT = SignedJWT.parse(oldToken);

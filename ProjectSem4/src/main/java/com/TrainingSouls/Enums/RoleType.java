@@ -1,6 +1,7 @@
 package com.TrainingSouls.Enums;
 
-public enum Role {
+public enum RoleType {
     ADMIN,
-    USER
+    USER,
+    STAFF
 }

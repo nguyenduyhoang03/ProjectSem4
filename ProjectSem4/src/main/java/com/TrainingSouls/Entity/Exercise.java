@@ -27,13 +27,5 @@ public class Exercise {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "duration")
-    private int duration; // Thời gian tập (phút)
-
-    @Column(name = "reps")
-    private String reps; // Số lần lặp
-
-    @Column(name = "distance")
-    private Double distance;
 }
 

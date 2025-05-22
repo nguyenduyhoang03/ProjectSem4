@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,24 +16,13 @@ import java.time.Instant;
 @Table(name = "notifications")
 public class Notification {
     @Id
-    @Column(name = "NotificationID", nullable = false)
-    private Integer NotificationId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserID", nullable = false)
-    private User userID;
-
-    @Lob
-    @Column(name = "Content", nullable = false)
+    private Long receiverId; // ID của COACH
+    private String title;
     private String content;
-
-    @Lob
-    @Column(name = "Type", nullable = false)
-    private String type;
-
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "Date")
-    private Instant date;
+    private boolean isRead = false;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

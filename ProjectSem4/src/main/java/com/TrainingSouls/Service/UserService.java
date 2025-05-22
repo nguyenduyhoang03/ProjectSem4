@@ -4,17 +4,15 @@ import com.TrainingSouls.DTO.Request.ChangePassword;
 import com.TrainingSouls.DTO.Request.IntrospectRequest;
 import com.TrainingSouls.DTO.Request.UserCreationReq;
 import com.TrainingSouls.DTO.Request.UserUpdate;
+import com.TrainingSouls.DTO.Response.CoachResponseDTO;
 import com.TrainingSouls.DTO.Response.PurchasedItemResponse;
 import com.TrainingSouls.DTO.Response.UserResponse;
-import com.TrainingSouls.Entity.Role;
-import com.TrainingSouls.Entity.StoreItem;
-import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Entity.UserItem;
+import com.TrainingSouls.DTO.Response.UserWithScoreResponse;
+import com.TrainingSouls.Entity.*;
 import com.TrainingSouls.Exception.AppException;
 import com.TrainingSouls.Exception.ErrorCode;
 import com.TrainingSouls.Mapper.UserMapper;
-import com.TrainingSouls.Repository.RoleRepository;
-import com.TrainingSouls.Repository.UserRepository;
+import com.TrainingSouls.Repository.*;
 import com.TrainingSouls.Utils.JWTUtils;
 import com.nimbusds.jose.JOSEException;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,10 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +46,11 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     StoreItemService storeItemService;
     AuthenticationService authenticationService;
-
+    LeaderboardRepository leaderboardRepository;
+    VerificationTokenRepository verificationTokenRepository;
+    EmailService emailService;
+    CoachStudentRepository coachStudentRepository;
+    DeviceTokenRepository deviceTokenRepository;
 
 
     //tao tai khoan - tao user moi
@@ -69,9 +70,71 @@ public class UserService {
         user.setLevel(1);
         user.setAccountType("basic");
         user.setStreak(0);
+        user.setActive(false);
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        //tao token xac thuc
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setUser(user);
+        verificationToken.setExpiryDate(LocalDateTime.now().plusMinutes(60));
+
+        verificationTokenRepository.save(verificationToken);
+
+        //gui mail
+        String confirmURL = "http://54.251.220.228:8080/trainingSouls/auth/confirm?token=" + token;
+        String content = """
+            <html>
+              <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                  <h2 style="color: #333333;">Chào mừng bạn đến với <span style="color: #4CAF50;">TrainingSouls</span>!</h2>
+                  <p style="font-size: 16px; color: #555555;">
+                    Cảm ơn bạn đã đăng ký. Vui lòng nhấn nút bên dưới để xác nhận tài khoản của bạn:
+                  </p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="%s" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">
+                      Xác nhận tài khoản
+                    </a>
+                  </div>
+                  <p style="font-size: 14px; color: #888888;">
+                    Nếu bạn không yêu cầu tạo tài khoản, hãy bỏ qua email này.
+                  </p>
+                </div>
+              </body>
+            </html>
+            """.formatted(confirmURL);
+
+
+        emailService.sendHtmlEmail(user.getEmail(),"Xác nhận tài khoản TrainingSouls", content);
+
+        return user;
+
     }
+
+    //lay thong tin cua coach cho hoc vien
+    public CoachResponseDTO getCoachInfor(HttpServletRequest req) {
+        long userId = JWTUtils.getSubjectFromRequest(req);
+
+        CoachStudent coachStudent = coachStudentRepository.findByStudentUserID(userId).orElseThrow(()->new AppException(ErrorCode.NOT_FOUND));
+
+        CoachResponseDTO coachResponseDTO = new CoachResponseDTO();
+        coachResponseDTO.setName(coachStudent.getCoach().getName());
+        coachResponseDTO.setEmail(coachStudent.getCoach().getEmail());
+
+        return coachResponseDTO;
+    }
+
+
+    //check xem user co coach chua
+    public Boolean checkExistCoach(HttpServletRequest req) {
+        long userId = JWTUtils.getSubjectFromRequest(req);
+
+        return coachStudentRepository.findByStudentUserID(userId).isPresent();
+
+    }
+
 
 
     //lay tat ca User
@@ -109,12 +172,31 @@ public class UserService {
     }
 
     //lay thong tin cua ban than
-    public User getMyInfo(){
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
+    public UserWithScoreResponse getMyInfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return userRepository.findByEmail(name).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        Double totalScore = leaderboardRepository.findByUser(user)
+                .map(Leaderboard::getTotalScore)
+                .orElse(0.0); // nếu chưa có leaderboard thì trả về 0.0
+
+        return UserWithScoreResponse.builder()
+                .userID(user.getUserID())
+                .name(user.getName())
+                .email(user.getEmail())
+                .accountType(user.getAccountType())
+                .points(user.getPoints())
+                .level(user.getLevel())
+                .streak(user.getStreak())
+                .roles(user.getRoles())
+                .purchasedItems(user.getPurchasedItems())
+                .userProfile(user.getUserProfile())
+                .totalScore(totalScore)
+                .build();
     }
+
 
 
     //lay san pham da mua
@@ -165,9 +247,6 @@ public class UserService {
 
         return authenticationService.generateToken(user);
     }
-
-
-
 
 
     public void addPoints(Long userId, Integer points) {

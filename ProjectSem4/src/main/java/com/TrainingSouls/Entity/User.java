@@ -1,5 +1,6 @@
 package com.TrainingSouls.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -58,6 +59,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private UserProfile userProfile;
+
+    @Column(name = "is_active", nullable = false)
+    @JsonIgnore
+    private Boolean active = false;
 
     @PrePersist
     public void generateId() {

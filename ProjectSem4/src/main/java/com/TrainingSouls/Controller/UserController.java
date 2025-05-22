@@ -5,8 +5,11 @@ import com.TrainingSouls.DTO.Request.UserCreationReq;
 import com.TrainingSouls.DTO.Request.UserProfileDTO;
 import com.TrainingSouls.DTO.Request.UserUpdate;
 import com.TrainingSouls.DTO.Response.ApiResponse;
+import com.TrainingSouls.DTO.Response.CoachResponseDTO;
 import com.TrainingSouls.DTO.Response.PurchasedItemResponse;
+import com.TrainingSouls.DTO.Response.UserWithScoreResponse;
 import com.TrainingSouls.Entity.User;
+import com.TrainingSouls.Service.CoachStudentService;
 import com.TrainingSouls.Service.UserProfileService;
 import com.TrainingSouls.Service.UserService;
 import com.nimbusds.jose.JOSEException;
@@ -18,6 +21,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +36,18 @@ import java.util.List;
 public class UserController {
      UserService userService;
      UserProfileService userProfileService;
+     CoachStudentService coachStudentService;
+
+     @GetMapping("/getMyCoach")
+     public CoachResponseDTO getMyCoach(HttpServletRequest request) {
+         return userService.getCoachInfor(request);
+     }
+
+
+     @GetMapping("/checkExistCoach")
+     public Boolean checkExistCoach(HttpServletRequest request) {
+         return userService.checkExistCoach(request);
+     }
 
     @PostMapping("/create-user")
     public ApiResponse<User> createUser(@RequestBody @Valid UserCreationReq user) {
@@ -55,8 +71,8 @@ public class UserController {
     }
 
     @GetMapping("/getMyInfo")
-    public ApiResponse<User> getMyInfo() {
-        return ApiResponse.<User>builder().result(userService.getMyInfo()).build();
+    public ApiResponse<UserWithScoreResponse> getMyInfo() {
+        return ApiResponse.<UserWithScoreResponse>builder().result(userService.getMyInfo()).build();
     }
 
     @GetMapping("/getMyPurchasedItem")
@@ -101,4 +117,12 @@ public class UserController {
         userService.deleteUser(userId);
         return "User deleted";
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/select-coach/{coachId}")
+    public ResponseEntity<?> selectCoach(@PathVariable Long coachId, HttpServletRequest request) {
+        coachStudentService.selectCoachForUser(request, coachId);
+        return ResponseEntity.ok("Đăng ký HLV thành công");
+    }
+
 }

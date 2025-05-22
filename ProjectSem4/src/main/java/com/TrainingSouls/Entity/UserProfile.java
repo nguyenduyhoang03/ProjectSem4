@@ -61,13 +61,13 @@ public class UserProfile {
     private Integer strength = 1;
 
     @Column(name = "Endurance")
-    private Integer Endurance = 1;
+    private Integer endurance = 1;
 
     @Column(name = "Health")
-    private Integer Health = 1;
+    private Integer health = 1;
 
     @Column(name = "Agility")
-    private Integer Agility = 1;
+    private Integer agility = 1;
 
     @Column(name = "deathPoints")
     private Integer deathPoints = 0;

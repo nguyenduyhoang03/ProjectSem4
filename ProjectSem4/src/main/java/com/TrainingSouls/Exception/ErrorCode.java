@@ -12,9 +12,10 @@ public enum ErrorCode {
     PASSWORD_INVALID(1003, "Password must be 8 characters and maximum 100 characters",HttpStatus.BAD_REQUEST),
     INVALID_KEY(1004, "Invalid Message", HttpStatus.BAD_REQUEST),
     NOT_FOUND(404, "Not Found", HttpStatus.NOT_FOUND),
-    UNAUTHENTICATED(401, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHENTICATED(401, "UNAUTHENTICATED", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "You do not have permission", HttpStatus.FORBIDDEN),
-    PAYMENT_VERIFICATION_FAILED(400,"Giao dịch không hợp lệ", HttpStatus.BAD_REQUEST)
+    PAYMENT_VERIFICATION_FAILED(400,"Giao dịch không hợp lệ", HttpStatus.BAD_REQUEST),
+    TOKEN_EXPIRED(401, "Token expired", HttpStatus.UNAUTHORIZED),
     ;
 
 

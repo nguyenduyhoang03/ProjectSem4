@@ -13,6 +13,7 @@ public class PointsTransactionDTO {
     private UserDTO user;
     private PointsTransaction.TransactionType type;
     private Integer points;
+    private Integer price;
     private Instant date;
     private String description;
     private PointsTransaction.TransactionStatus status;

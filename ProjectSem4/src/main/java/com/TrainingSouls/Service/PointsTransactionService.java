@@ -39,7 +39,6 @@ public class PointsTransactionService {
         PointsTransaction transaction = new PointsTransaction();
         transaction.setUser(user);
         transaction.setType(PointsTransaction.TransactionType.SPEND);
-        transaction.setPoints(item.getPrice());
         transaction.setItemId(item.getItemId());
         transaction.setDate(Instant.now());
         transaction.setDescription("Thanh toán item: " + item.getName() + " qua VNPAY");

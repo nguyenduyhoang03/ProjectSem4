@@ -1,17 +1,21 @@
 package com.TrainingSouls.Controller;
 
 import com.TrainingSouls.DTO.Request.DailyWorkoutResultRequest;
+import com.TrainingSouls.DTO.Request.LevelUpgradeTestDTO;
 import com.TrainingSouls.DTO.Request.WorkoutResultRequest;
 import com.TrainingSouls.DTO.Response.WorkoutPlanDTO;
 import com.TrainingSouls.DTO.Response.WorkoutResultDTO;
 import com.TrainingSouls.Entity.WorkoutPlan;
 import com.TrainingSouls.Entity.WorkoutResult;
+import com.TrainingSouls.Service.LevelUpgradeService;
 import com.TrainingSouls.Service.WorkoutPlanService;
 import com.TrainingSouls.Service.WorkoutResultService;
+import com.TrainingSouls.Utils.JWTUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -25,6 +29,7 @@ import java.util.List;
 public class WorkoutPlanController {
     private final WorkoutPlanService workoutPlanService;
     private final WorkoutResultService workoutResultService;
+    private final LevelUpgradeService levelUpgradeService;
 
     @GetMapping
     public ResponseEntity<List<WorkoutPlanDTO>> getWorkoutPlanByUserId(HttpServletRequest request) {
@@ -59,5 +64,32 @@ public class WorkoutPlanController {
         workoutResultService.checkMissedWorkouts();
         return ResponseEntity.ok("Cron job executed successfully!");
     }
+
+
+    @PreAuthorize("hasRole('COACH')")
+    @PostMapping("/custom/{userId}")
+    public ResponseEntity<?> createCustomPlan(
+            @PathVariable Long userId,
+            @RequestBody List<WorkoutPlanDTO> plans,
+            HttpServletRequest request) {
+
+        Long creatorId = JWTUtils.getSubjectFromRequest(request);
+        workoutPlanService.createCustomWorkoutPlanForUser(userId, creatorId, plans);
+        return ResponseEntity.ok("Lên lịch thủ công thành công");
+    }
+
+    @PreAuthorize("hasRole('COACH')")
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<?> updateCustomWorkoutPlan(
+            @PathVariable Long userId,
+            @RequestBody List<WorkoutPlanDTO> plans,
+            HttpServletRequest request) {
+
+        Long editorId = JWTUtils.getSubjectFromRequest(request);
+        workoutPlanService.updateCustomWorkoutPlan(userId, editorId, plans);
+        return ResponseEntity.ok("Cập nhật lịch tập thành công");
+    }
+
+
 }
 

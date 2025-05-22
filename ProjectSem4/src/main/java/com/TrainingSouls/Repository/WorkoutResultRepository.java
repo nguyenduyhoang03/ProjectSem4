@@ -19,5 +19,10 @@ public interface WorkoutResultRepository extends JpaRepository<WorkoutResult, Lo
 
     List<WorkoutResult> findByUserUserIDAndCreatedAtBetweenOrderByCreatedAtDesc(
             Long userId, LocalDateTime start, LocalDateTime end);
+
+    List<WorkoutResult> findByUserUserID(long studentId);
+
+
+    void deleteWorkoutPlanByUserUserID(long userId);
 }
 

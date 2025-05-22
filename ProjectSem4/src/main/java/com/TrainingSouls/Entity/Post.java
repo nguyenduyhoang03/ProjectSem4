@@ -31,6 +31,8 @@ public class Post {
     private List<String> videoUrl;
 
     @ElementCollection
+    @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private List<String> content;
 
     private LocalDateTime createdAt;

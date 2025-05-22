@@ -7,17 +7,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDTO {
-    private Long userId;
+    private Long userID;
     private String name;
     private String email;
     private Integer points;
 
-
     public UserDTO(User user) {
-        this.userId = user.getUserID();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.points = user.getPoints();
+        if (user != null) {
+            this.userID = user.getUserID();
+            this.name = user.getName();
+            this.email = user.getEmail();
+            this.points = user.getPoints();
+        }
     }
+
+
 }
 
