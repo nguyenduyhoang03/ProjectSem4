@@ -37,6 +37,7 @@ public class PostService {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
     public PostResponse createPost(PostCreation request , HttpServletRequest httpServletRequest) {
         //lay userID tu Token
         Long userId = JWTUtils.getSubjectFromRequest(httpServletRequest);
@@ -59,7 +60,7 @@ public class PostService {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
     public Post updatePost(Long postId, PostUpdate request) {
         Post post = postRepository.findById(postId).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
             post.setTitle(request.getTitle());
@@ -86,7 +87,7 @@ public class PostService {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
     public String DeletePost(Long postId) {
         Post post = postRepository.findById(postId).get();
         postRepository.delete(post);

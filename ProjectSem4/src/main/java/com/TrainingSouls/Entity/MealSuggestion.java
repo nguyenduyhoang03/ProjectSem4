@@ -29,6 +29,5 @@ public class MealSuggestion {
 
     private String fitnessGoal;
 
-    private boolean favorite = false;
 }
 

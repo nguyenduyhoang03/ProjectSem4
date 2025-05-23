@@ -11,6 +11,5 @@ public class NotificationMessage {
     private String title;
     private String body;
     private String image;
-
     private Map<String, String> data = new HashMap<>();
 }

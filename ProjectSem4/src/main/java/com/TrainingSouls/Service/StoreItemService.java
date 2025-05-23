@@ -32,24 +32,29 @@ public class StoreItemService {
         storeItem.setPointsRequired(storeItemReq.getPointsRequired());
         storeItem.setQuantity(storeItemReq.getQuantity());
         storeItem.setDescription(storeItemReq.getDescription());
+        storeItem.setDurationInDays(storeItemReq.getDurationInDays());
+        storeItem.setItemType(storeItemReq.getItemType());
+        storeItem.setPrice(storeItemReq.getPrice());
 
         return storeItemRepository.save(storeItem);
     }
-
 
     @PreAuthorize("hasRole('ADMIN')")
     public StoreItem updateStoreItem(Integer id, StoreItemReq storeItemReq){
         StoreItem storeItem = storeItemRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
-        // Cập nhật dữ liệu
         storeItem.setName(storeItemReq.getName());
         storeItem.setPointsRequired(storeItemReq.getPointsRequired());
         storeItem.setQuantity(storeItemReq.getQuantity());
         storeItem.setDescription(storeItemReq.getDescription());
+        storeItem.setDurationInDays(storeItemReq.getDurationInDays());
+        storeItem.setItemType(storeItemReq.getItemType());
+        storeItem.setPrice(storeItemReq.getPrice());
 
         return storeItemRepository.save(storeItem);
     }
+
 
 
     @PreAuthorize("hasRole('ADMIN')")

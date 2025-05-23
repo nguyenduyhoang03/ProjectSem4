@@ -1,13 +1,8 @@
 package com.TrainingSouls.Controller;
 
 import com.TrainingSouls.DTO.Request.DailyWorkoutResultRequest;
-import com.TrainingSouls.DTO.Request.LevelUpgradeTestDTO;
-import com.TrainingSouls.DTO.Request.WorkoutResultRequest;
 import com.TrainingSouls.DTO.Response.WorkoutPlanDTO;
 import com.TrainingSouls.DTO.Response.WorkoutResultDTO;
-import com.TrainingSouls.Entity.WorkoutPlan;
-import com.TrainingSouls.Entity.WorkoutResult;
-import com.TrainingSouls.Service.LevelUpgradeService;
 import com.TrainingSouls.Service.WorkoutPlanService;
 import com.TrainingSouls.Service.WorkoutResultService;
 import com.TrainingSouls.Utils.JWTUtils;
@@ -18,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,7 +22,6 @@ import java.util.List;
 public class WorkoutPlanController {
     private final WorkoutPlanService workoutPlanService;
     private final WorkoutResultService workoutResultService;
-    private final LevelUpgradeService levelUpgradeService;
 
     @GetMapping
     public ResponseEntity<List<WorkoutPlanDTO>> getWorkoutPlanByUserId(HttpServletRequest request) {

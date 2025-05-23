@@ -91,7 +91,7 @@ public class UserService {
                 <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                   <h2 style="color: #333333;">Chào mừng bạn đến với <span style="color: #4CAF50;">TrainingSouls</span>!</h2>
                   <p style="font-size: 16px; color: #555555;">
-                    Cảm ơn bạn đã đăng ký. Vui lòng nhấn nút bên dưới để xác nhận tài khoản của bạn:
+                    Cảm ơn bạn đã đăng ký. Link sẽ hết hạn sau 60 phút, Vui lòng nhấn nút bên dưới để xác nhận tài khoản của bạn:
                   </p>
                   <div style="text-align: center; margin: 30px 0;">
                     <a href="%s" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">

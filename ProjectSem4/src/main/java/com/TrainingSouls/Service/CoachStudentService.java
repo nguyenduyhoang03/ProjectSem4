@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -126,6 +127,7 @@ public class CoachStudentService {
 
 
     //COACH xac nhan hoc vien du yeu cau len lv
+    @Transactional
     public void coachConfirmLevelUp(HttpServletRequest request, Long targetUserId) {
         long coachId = JWTUtils.getSubjectFromRequest(request);
         User coach = userRepository.findById(coachId)

@@ -107,7 +107,7 @@ public class UserController {
     }
 
     @PostMapping("/save-profile")
-    public ResponseEntity<?> saveProfile(HttpServletRequest request,@RequestBody UserProfileDTO userProfile) {
+    public ResponseEntity<?> saveProfile(HttpServletRequest request,@Valid @RequestBody UserProfileDTO userProfile) {
         return ResponseEntity.ok(userProfileService.saveUserProfile(request,userProfile));
     }
 

@@ -59,6 +59,21 @@ public class EmailService {
             StringBuilder sb = new StringBuilder();
 
             sb.append("<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;\">");
+            sb.append("<style>");
+            sb.append("@media only screen and (max-width: 600px) {");
+            sb.append("  table { width: 100% !important; }");
+            sb.append("  thead { display: none; }");
+            sb.append("  tr { display: block; margin-bottom: 10px; }");
+            sb.append("  td { display: block; text-align: right; padding-left: 50%; position: relative; }");
+            sb.append("  td::before { position: absolute; left: 10px; top: 10px; white-space: nowrap; font-weight: bold; text-align: left; }");
+            sb.append("  td:nth-of-type(1)::before { content: 'Mã giao dịch'; }");
+            sb.append("  td:nth-of-type(2)::before { content: 'Sản phẩm'; }");
+            sb.append("  td:nth-of-type(3)::before { content: 'Thanh toán'; }");
+            sb.append("  td:nth-of-type(4)::before { content: 'Số tiền'; }");
+            sb.append("  td:nth-of-type(5)::before { content: 'Thời gian'; }");
+            sb.append("}");
+            sb.append("</style>");
+
             sb.append("<h2 style=\"color: #2c3e50; text-align: center;\">Hóa đơn mua hàng</h2>");
             sb.append("<p>Xin chào <strong>").append(fullName).append("</strong>,</p>");
             sb.append("<p>Cảm ơn bạn đã mua hàng tại <strong style='color:#16a085;'>Training Souls</strong>. Dưới đây là chi tiết giao dịch của bạn:</p>");
@@ -80,8 +95,7 @@ public class EmailService {
             sb.append("<td style=\"padding: 10px; border: 1px solid #ccc;\">").append(id).append("</td>");
             sb.append("<td style=\"padding: 10px; border: 1px solid #ccc;\">").append(itemName).append("</td>");
             sb.append("<td style=\"padding: 10px; border: 1px solid #ccc;\">").append(paymentMethod).append("</td>");
-            sb.append("<td style=\"padding: 10px; border: 1px solid #ccc; color: #e67e22;\"><strong>").append(amount).append(" VNĐ</strong></td>");
-            sb.append("<td style=\"padding: 10px; border: 1px solid #ccc;\">").append(status).append("</td>");
+            sb.append("<td style=\"padding: 10px; border: 1px solid #ccc; color: #e67e22;\"><strong>").append(amount).append(" $</strong></td>");
             sb.append("<td style=\"padding: 10px; border: 1px solid #ccc;\">").append(transactionTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))).append("</td>");
             sb.append("</tr>");
             sb.append("</tbody>");

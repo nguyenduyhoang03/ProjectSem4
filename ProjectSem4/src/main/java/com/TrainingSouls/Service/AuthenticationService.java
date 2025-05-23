@@ -106,7 +106,7 @@ public class AuthenticationService {
               <h2 style="color: #333333;">Yêu cầu đặt lại mật khẩu</h2>
               <p style="font-size: 16px; color: #555555;">
                 Bạn vừa gửi yêu cầu đặt lại mật khẩu cho tài khoản TrainingSouls.
-                Nhấn vào nút bên dưới để đặt lại mật khẩu:
+                Liên kết sẽ hết hạn sau 30 phút, Nhấn vào nút bên dưới để đặt lại mật khẩu:
               </p>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="%s" style="background-color: #FF5722; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">

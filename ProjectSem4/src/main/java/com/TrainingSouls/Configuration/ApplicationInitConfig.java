@@ -2,7 +2,6 @@ package com.TrainingSouls.Configuration;
 
 import com.TrainingSouls.Entity.Role;
 import com.TrainingSouls.Entity.User;
-import com.TrainingSouls.Enums.RoleType;
 import com.TrainingSouls.Repository.RoleRepository;
 import com.TrainingSouls.Repository.UserRepository;
 import lombok.AccessLevel;
